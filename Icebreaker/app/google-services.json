@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "996900291862",
+    "firebase_url": "https://oceanic-camera-140416.firebaseio.com",
+    "project_id": "oceanic-camera-140416",
+    "storage_bucket": "oceanic-camera-140416.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:996900291862:android:e9d6ab873cc8eb68",
+        "android_client_info": {
+          "package_name": "in.icebreakerapp.icebreaker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "996900291862-u94jjvmpo2p7rtbjjhcamj0dpusg3lf1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "in.icebreakerapp.icebreaker",
+            "certificate_hash": "76E0763CEDE0B05C8D2AB37B4087D47259A46C26"
+          }
+        },
+        {
+          "client_id": "996900291862-p5k16l7k1li99hrnak8um0cs5agf7e7i.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "996900291862-0m7fnilfc8lflfp8g9esh3fq6qtkhf1u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDH12Xa37_2t8WumUtvcsq-GaAzm1dmr5A"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

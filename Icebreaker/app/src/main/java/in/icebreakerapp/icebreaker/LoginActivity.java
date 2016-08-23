@@ -37,6 +37,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
+        Intent intent =new Intent(LoginActivity.this,MainActivity.class);
+        startActivity(intent);
         signup = (Button) findViewById(R.id.btn_signup);
         eno_e = (EditText) findViewById(R.id.eno);
         dob_e = (EditText) findViewById(R.id.dob);
