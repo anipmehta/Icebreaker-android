@@ -2,6 +2,7 @@ package in.icebreakerapp.icebreaker;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -24,6 +25,8 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import in.icebreakerapp.icebreaker.models.SignupStatus;
+
 /**
  * Created by anip on 12/08/16.
  */
@@ -37,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
-        Intent intent =new Intent(LoginActivity.this,MainActivity.class);
+        Intent intent =new Intent(LoginActivity.this,ChatActivity.class);
         startActivity(intent);
         signup = (Button) findViewById(R.id.btn_signup);
         eno_e = (EditText) findViewById(R.id.eno);
@@ -49,6 +52,10 @@ public class LoginActivity extends AppCompatActivity {
                 eno = eno_e.getText().toString();
                 dob = dob_e.getText().toString();
                 password = pass_e.getText().toString();
+                SharedPreferences sp = getApplicationContext().getSharedPreferences("user", 0);
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putString("enroll",eno);
+                editor.commit();
                 String serverURL1 = "http://anip.xyz/icebreakerlogin.php";
                 new LongOperation2().execute(serverURL1);
 
@@ -165,6 +172,7 @@ public class LoginActivity extends AppCompatActivity {
 
             Log.i("response", String.valueOf(response) + Error);
             if (response.getResponse().equals("Success") || response.getResponse().equals("User updated")) {
+
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 startActivity(intent);
             } else {

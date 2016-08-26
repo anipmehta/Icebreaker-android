@@ -1,4 +1,4 @@
-package in.icebreakerapp.icebreaker;
+package in.icebreakerapp.icebreaker.adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -13,15 +13,18 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import in.icebreakerapp.icebreaker.models.IcebreakerNotification;
+import in.icebreakerapp.icebreaker.R;
+
 /**
  * Created by siddharth on 23-08-2016.
  */
 public class ChatAdapter extends BaseAdapter {
 
-    private final List<ChatMessage> chatMessages;
+    private final List<IcebreakerNotification> chatMessages;
     private Activity context;
 
-    public ChatAdapter(Activity context, List<ChatMessage> chatMessages) {
+    public ChatAdapter(Activity context, List<IcebreakerNotification> chatMessages) {
         this.context = context;
         this.chatMessages = chatMessages;
     }
@@ -36,7 +39,7 @@ public class ChatAdapter extends BaseAdapter {
     }
 
     @Override
-    public ChatMessage getItem(int position) {
+    public IcebreakerNotification getItem(int position) {
         if (chatMessages != null) {
             return chatMessages.get(position);
         } else {
@@ -52,7 +55,7 @@ public class ChatAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
-        ChatMessage chatMessage = getItem(position);
+        IcebreakerNotification chatMessage = getItem(position);
         LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (convertView == null) {
@@ -63,20 +66,20 @@ public class ChatAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        boolean myMsg = chatMessage.getIsme() ;//Just a dummy check
+//        boolean myMsg = chatMessage.getIsme() ;//Just a dummy check
         //to simulate whether it me or other sender
-        setAlignment(holder, myMsg);
+//        setAlignment(holder, myMsg);
         holder.txtMessage.setText(chatMessage.getMessage());
-        holder.txtInfo.setText(chatMessage.getDate());
+//        holder.txtInfo.setText(chatMessage.getDate());
 
         return convertView;
     }
 
-    public void add(ChatMessage message) {
+    public void add(IcebreakerNotification message) {
         chatMessages.add(message);
     }
 
-    public void add(List<ChatMessage> messages) {
+    public void add(List<IcebreakerNotification> messages) {
         chatMessages.addAll(messages);
     }
 

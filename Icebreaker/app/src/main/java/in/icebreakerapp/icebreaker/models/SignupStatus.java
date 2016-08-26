@@ -1,4 +1,4 @@
-package in.icebreakerapp.icebreaker;
+package in.icebreakerapp.icebreaker.models;
 
 import com.google.gson.annotations.SerializedName;
 

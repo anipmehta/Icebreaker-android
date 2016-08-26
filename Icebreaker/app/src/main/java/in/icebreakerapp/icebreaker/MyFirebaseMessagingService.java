@@ -12,6 +12,9 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import in.icebreakerapp.icebreaker.helpers.MessageDb;
+import in.icebreakerapp.icebreaker.models.IcebreakerNotification;
+
 /**
  * Created by anip on 18/08/16.
  */
@@ -28,13 +31,24 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.d(TAG, "Notification Message Body: " + remoteMessage.getData().get("message"));
 
         //Calling method to generate notification
+//        scroll();
+        IcebreakerNotification message = new IcebreakerNotification();
+        message.setMessage(remoteMessage.getData().get("message"));
+        message.setFrom(remoteMessage.getData().get("title"));
+        message.setTo("13103630");
+        MessageDb db = new MessageDb(MyFirebaseMessagingService.this);
+        if(db.getChatId(message)==0)
+            db.addChat(message);
+        db.addMessage(message.getMessage(),db.getChatId(message));
+//        ChatActivity.adapter.notifyDataSetChanged();
+
         sendNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("message"), Integer.parseInt(remoteMessage.getData().get("id")));
     }
 
     //This method is only generating push notification
     //It is same as we did in earlier posts
     private void sendNotification(String title, String messageBody,int id) {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, ChatActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, id, intent,
                 PendingIntent.FLAG_ONE_SHOT);
