@@ -1,6 +1,10 @@
 package in.icebreakerapp.icebreaker;
 
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -42,6 +46,8 @@ public class ChatActivity extends ActionBarActivity {
     private ListView messagesContainer;
     private Button sendBtn;
     public static ChatAdapter adapter;
+    Intent serviceIntent;
+    BroadcastReceiver receiver;
     public static List<IcebreakerNotification> chatHistory;
     MessageDb db;
 
@@ -51,7 +57,20 @@ public class ChatActivity extends ActionBarActivity {
         setContentView(R.layout.activity_chat);
         chatHistory = new ArrayList<IcebreakerNotification>();
         db =new MessageDb(ChatActivity.this);
+
         initControls();
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+
+                String time = intent.getStringExtra("time");
+                String counter = intent.getStringExtra("counter");
+                loadDummyHistory();
+                scroll();
+
+
+            }
+        };
     }
 
     private void initControls() {
@@ -252,5 +271,30 @@ public class ChatActivity extends ActionBarActivity {
 
         }
 
-    }}
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        serviceIntent = new Intent(getApplicationContext(),
+                UpdaterService.class);
+        startService(serviceIntent);
+
+        registerReceiver(receiver, new IntentFilter(
+                UpdaterService.BROADCAST_ACTION));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopService(serviceIntent);
+        unregisterReceiver(receiver);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finishAffinity();
+    }
+}
 
