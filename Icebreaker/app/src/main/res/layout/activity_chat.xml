@@ -50,6 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left|center_vertical"
                 android:text="MySelf"
+                android:visibility="gone"
                 android:singleLine="false"
                 android:textSize="20dp" />
 
@@ -59,6 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:text="Friend"
+                android:visibility="gone"
                 android:textSize="20dp" />
 
         </RelativeLayout>

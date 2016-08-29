@@ -81,7 +81,7 @@ public class ChatActivity extends ActionBarActivity {
         TextView meLabel = (TextView) findViewById(R.id.meLbl);
         TextView companionLabel = (TextView) findViewById(R.id.friendLabel);
         RelativeLayout container = (RelativeLayout) findViewById(R.id.container);
-        companionLabel.setText("My Buddy");// Hard Coded
+//        companionLabel.setText("My Buddy");// Hard Coded
         loadDummyHistory();
 
         sendBtn.setOnClickListener(new View.OnClickListener() {
@@ -278,7 +278,7 @@ public class ChatActivity extends ActionBarActivity {
         super.onResume();
         serviceIntent = new Intent(getApplicationContext(),
                 UpdaterService.class);
-        startService(serviceIntent);
+//        startService(serviceIntent);
 
         registerReceiver(receiver, new IntentFilter(
                 UpdaterService.BROADCAST_ACTION));
@@ -294,7 +294,7 @@ public class ChatActivity extends ActionBarActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        finishAffinity();
+//        finishAffinity();
     }
 }
 

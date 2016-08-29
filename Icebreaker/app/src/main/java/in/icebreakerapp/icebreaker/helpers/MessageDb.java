@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import in.icebreakerapp.icebreaker.models.HomeChat;
 import in.icebreakerapp.icebreaker.models.IcebreakerNotification;
 
 /**
@@ -45,7 +46,7 @@ public class MessageDb extends SQLiteOpenHelper {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         ContentValues values = new ContentValues();
         values.put("'to'", data.getTo());
-        values.put("'from'", data.getTo());
+        values.put("'from'", data.getFrom());
         db.insert("chat", null, values);
         db.close();
     }
@@ -60,9 +61,11 @@ public class MessageDb extends SQLiteOpenHelper {
         db.close();
     }
     public int getChatId(IcebreakerNotification data) {
-        String countQuery = "SELECT  * FROM " + "chat where 'to'='" + data.getTo() + "' and 'from'='" + data.getFrom()+"'";
+        String countQuery = "SELECT * FROM " + "chat where 'to'='" + data.getTo() + "' and 'from'='" + data.getFrom()+"'";
+        Log.i("hell",countQuery);
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
+//        Log.i("hell", String.valueOf(cursor.getColumnCount()));
         if (cursor.getCount()==0)
             return 0;
         else
@@ -86,4 +89,24 @@ public class MessageDb extends SQLiteOpenHelper {
 
         return messageList;
     }
+
+    public ArrayList<HomeChat> getChats() {
+        ArrayList<HomeChat> messageList = new ArrayList<HomeChat>();
+        String selectQuery = "SELECT * FROM chat";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                HomeChat message = new HomeChat();
+                message.setTitle(cursor.getString(1));
+                Log.i("hell",cursor.getString(1));
+                messageList.add(message);
+            } while (cursor.moveToNext());
+        }
+
+        return messageList;
+    }
+
 }

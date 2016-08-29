@@ -36,6 +36,7 @@ public class UpdaterService extends Service {
 
     @Override
     public synchronized int onStartCommand(Intent intent, int flags, int startId) {
+        String[] received = intent.getStringArrayExtra("status");
 
         if (!updater.isRunning()) {
             updater.start();
@@ -61,7 +62,7 @@ public class UpdaterService extends Service {
 
     }
 
-    class Updater extends Thread {
+    public class Updater extends Thread {
 
         public boolean isRunning = false;
         public long DELAY = 4000;
@@ -71,20 +72,21 @@ public class UpdaterService extends Service {
         @Override
         public void run() {
             super.run();
+            sendResult("true");
 
             isRunning = true;
-            while (isRunning) {
-                Log.d("acd", "Running...");
-                // sendbroadcast
-                sendResult(i + "");
-                i++;
-                try {
-                    Thread.sleep(DELAY);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    isRunning = false;
-                }
-            } // while end
+//            while (isRunning) {
+//                Log.d("acd", "Running...");
+//                // sendbroadcast
+//                sendResult(i + "");
+//                i++;
+//                try {
+//                    Thread.sleep(DELAY);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                    isRunning = false;
+//                }
+//            } // while end
         } // run end
 
         public boolean isRunning() {
