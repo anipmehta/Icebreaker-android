@@ -17,6 +17,7 @@ import android.view.View;
 
 import in.icebreakerapp.icebreaker.fragments.ChatFragment;
 import in.icebreakerapp.icebreaker.fragments.PlaceHolderFragment;
+import in.icebreakerapp.icebreaker.fragments.RandomFragment;
 
 public class Home extends AppCompatActivity {
 
@@ -111,6 +112,8 @@ public class Home extends AppCompatActivity {
             // Return a PlaceholderFragment (defined as a static inner class below).
             if(position == 1)
                 return ChatFragment.newInstance();
+            else if(position == 0)
+                return RandomFragment.newInstance();
             else
                 return PlaceHolderFragment.newInstance(position + 1);
         }
@@ -125,7 +128,7 @@ public class Home extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "Home";
+                    return "Random";
                 case 1:
                     return "Chats";
                 case 2:
