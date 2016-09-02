@@ -178,9 +178,9 @@ public class ChatActivity extends ActionBarActivity {
             // try{
             // Set Request parameter
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("to", "13103622");
+            jsonObject.addProperty("to", "oneplus");
             jsonObject.addProperty("message",messageET.getText().toString());
-            jsonObject.addProperty("from", "13103630");
+            jsonObject.addProperty("from", "13103622");
 
 
             Gson gson2 = new Gson();
@@ -205,7 +205,7 @@ public class ChatActivity extends ActionBarActivity {
 
             try {
 
-                httpcon = (HttpURLConnection) ((new URL("http://10.0.2.2:8000/send/").openConnection()));
+                httpcon = (HttpURLConnection) ((new URL("http://anip.xyz:8080/send/").openConnection()));
                 httpcon.setDoOutput(true);
                 httpcon.setRequestProperty("Content-Type", "application/json");
                 httpcon.setRequestProperty("Accept", "application/json");

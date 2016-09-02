@@ -141,7 +141,7 @@ public class RandomFragment extends Fragment {
 
             try {
 
-                httpcon = (HttpURLConnection) ((new URL("http://10.0.2.2:8000/random/").openConnection()));
+                httpcon = (HttpURLConnection) ((new URL("http://anip.xyz:8080/random/").openConnection()));
                 httpcon.setDoOutput(true);
                 httpcon.setRequestProperty("Content-Type", "application/json");
                 httpcon.setRequestProperty("Accept", "application/json");

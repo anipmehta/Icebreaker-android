@@ -1,18 +1,22 @@
 package in.icebreakerapp.icebreaker;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -26,6 +30,8 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
 
     private static final String TAG = "MyFirebaseIIDService";
     private String refreshedToken;
+    private String dev_id;
+    private int code =0 ;
 
     @Override
     public void onTokenRefresh() {
@@ -35,13 +41,21 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
 
         //Displaying token on logcat
         Log.d(TAG, "Refreshed token: " + refreshedToken);
+        sendRegistrationToServer(refreshedToken);
 
     }
 
     private void sendRegistrationToServer(String token) {
         //You can implement this method to store the token on your server
         //Not required for current project
-        String serverURL1 = "10.0.2.2:8000/gcm/v1/device/register/";
+        TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+        dev_id = telephonyManager.getDeviceId();
+        SharedPreferences sharedPreferences = this.getSharedPreferences("deviceConfig",MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("dev_id",dev_id);
+        editor.putString("token",refreshedToken);
+        editor.commit();
+        String serverURL1 = "http://anip.xyz:8080/gcm/v1/device/register/";
         new LongOperation1().execute(serverURL1);
     }
     private class LongOperation1 extends AsyncTask<String, Void, Void> {
@@ -57,9 +71,17 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
         int sizeData = 0;
 
         protected void onPreExecute() {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("dev_id",dev_id);
+            jsonObject.addProperty("reg_id", refreshedToken);
 
-            data += "dev_id" + "="+ "13103630"+ "&"
-                    + "reg_id=" +refreshedToken ;
+
+            Gson gson2 = new Gson();
+
+            String jsonString = gson2.toJson(jsonObject);
+            Log.i("hell", jsonString);
+
+            data +=jsonString;
 
         }
 
@@ -67,59 +89,45 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
         protected Void doInBackground(String... urls) {
 
             /************ Make Post Call To Web Server ***********/
-            BufferedReader reader = null;
+            HttpURLConnection httpcon;
 
-            // Send data
             try {
 
-                // Defined URL where to send data
-                // URL url = new URL(urls[0]);
+                httpcon = (HttpURLConnection) ((new URL("http://anip.xyz:8080/gcm/v1/device/register/").openConnection()));
+                httpcon.setDoOutput(true);
+                httpcon.setRequestProperty("Content-Type", "application/json");
+                httpcon.setRequestProperty("Accept", "application/json");
+                httpcon.setRequestMethod("POST");
+                httpcon.connect();
 
-                // Send POST data request
-                HttpURLConnection conn = (HttpURLConnection) ((new URL(urls[0])
-                        .openConnection()));
-                conn.setRequestMethod("POST");
-                conn.connect();
-
-                OutputStreamWriter wr = new OutputStreamWriter(
-                        conn.getOutputStream());
-                wr.write(data);
-                wr.flush();
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(
-                        new OutputStreamWriter(os, "UTF-8"));
+                OutputStream os = httpcon.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
                 writer.write(data);
                 writer.close();
                 os.close();
+                Log.i("hel", String.valueOf(httpcon.getErrorStream()) + httpcon.getResponseMessage() + httpcon.getResponseCode());
 
-                // Get the server response
 
-                reader = new BufferedReader(new InputStreamReader(
-                        conn.getInputStream()));
+                BufferedReader br = new BufferedReader(new InputStreamReader(httpcon.getInputStream(), "UTF-8"));
+                code = httpcon.getResponseCode();
+                String line;
                 StringBuilder sb = new StringBuilder();
-                String line = null;
 
-                // Read Server Response
-                while ((line = reader.readLine()) != null) {
-                    // Append server response in string
-                    sb.append(line + "\n");
+                while ((line = br.readLine()) != null) {
+                    sb.append(line);
                 }
 
-                // Append Server Response To Content String
+                br.close();
+                Gson gson2 = new Gson();
+                Log.i("he;;", sb.toString());
+
                 result = sb.toString();
-            } catch (Exception ex) {
-                Error = ex.getMessage();
-                ex.printStackTrace();
-            } finally {
-                try {
-
-                    reader.close();
-                }
-
-                catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+
+            // Append Server Response To Content String
+
 
             /*****************************************************/
             return null;
@@ -130,21 +138,23 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
             if (Error != null) {
                 // uiUpdate.setText("Output : " + Error);
                 {
-                    Log.i("hell",Error.toString());
+                    Log.i("hell", Error.toString());
                     Toast toast = Toast.makeText(MyFirebaseInstanceIDService.this,
-                            "No internet connection"+Error.toString(), Toast.LENGTH_LONG);
+                            "No internet connection" + Error.toString(), Toast.LENGTH_LONG);
                     toast.show();
                 }
 
-            }
-                 else {
-                    Toast toast = Toast.makeText(MyFirebaseInstanceIDService.this, "Invalid Mobile Number", Toast.LENGTH_LONG);
+            } else {
+                if (code == 200) {
+
+                    Toast toast = Toast.makeText(MyFirebaseInstanceIDService.this, "Success", Toast.LENGTH_LONG);
                     toast.show();
                 }
 
             }
         }
+    }}
 
 
 
-}
+

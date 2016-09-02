@@ -28,7 +28,7 @@ public class MessageDb extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String query = "CREATE TABLE chat ('to' VARCHAR(8),'from' VARCHAR(8),chat_id INTEGER PRIMARY KEY AUTOINCREMENT)";
+        String query = "CREATE TABLE chat (receiver VARCHAR(8),sender VARCHAR(8),chat_id INTEGER PRIMARY KEY AUTOINCREMENT)";
         String query2 = "CREATE TABLE messages(id INTEGER PRIMARY KEY,chat_id INTEGER,message TEXT NOT NULL,FOREIGN KEY(chat_id) REFERENCES chat(chat_id))";
         sqLiteDatabase.execSQL(query);
         sqLiteDatabase.execSQL(query2);
@@ -45,8 +45,8 @@ public class MessageDb extends SQLiteOpenHelper {
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         ContentValues values = new ContentValues();
-        values.put("'to'", data.getTo());
-        values.put("'from'", data.getFrom());
+        values.put("receiver", data.getTo());
+        values.put("sender", data.getFrom());
         db.insert("chat", null, values);
         db.close();
     }
@@ -61,7 +61,7 @@ public class MessageDb extends SQLiteOpenHelper {
         db.close();
     }
     public int getChatId(IcebreakerNotification data) {
-        String countQuery = "SELECT * FROM " + "chat where 'to'='" + data.getTo() + "' and 'from'='" + data.getFrom()+"'";
+        String countQuery = "SELECT * FROM " + "chat where receiver=" + data.getTo() + " and sender=" + data.getFrom()+"";
         Log.i("hell",countQuery);
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);

@@ -36,12 +36,13 @@ public class LoginActivity extends AppCompatActivity {
     private EditText dob_e;
     private EditText pass_e;
     private String eno,dob,password;
+    private int code;
+    private String dev_id;
+    private String reg_id;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
-        Intent intent =new Intent(LoginActivity.this,ChatActivity.class);
-        startActivity(intent);
         signup = (Button) findViewById(R.id.btn_signup);
         eno_e = (EditText) findViewById(R.id.eno);
         dob_e = (EditText) findViewById(R.id.dob);
@@ -52,10 +53,7 @@ public class LoginActivity extends AppCompatActivity {
                 eno = eno_e.getText().toString();
                 dob = dob_e.getText().toString();
                 password = pass_e.getText().toString();
-                SharedPreferences sp = getApplicationContext().getSharedPreferences("user", 0);
-                SharedPreferences.Editor editor = sp.edit();
-                editor.putString("enroll",eno);
-                editor.commit();
+
                 String serverURL1 = "http://anip.xyz/icebreakerlogin.php";
                 new LongOperation2().execute(serverURL1);
 
@@ -172,9 +170,16 @@ public class LoginActivity extends AppCompatActivity {
 
             Log.i("response", String.valueOf(response) + Error);
             if (response.getResponse().equals("Success") || response.getResponse().equals("User updated")) {
-
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
+                SharedPreferences sp = getApplicationContext().getSharedPreferences("user", 0);
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putString("enroll",eno);
+                editor.putString("dob",dob);
+                editor.commit();
+                SharedPreferences sp2 = getApplicationContext().getSharedPreferences("deviceConfig",MODE_PRIVATE);
+                dev_id = sp2.getString("dev_id","");
+                reg_id = sp2.getString("token","");
+                String serverURL1 = "http://anip.xyz:8080/gcm/v1/device/register/";
+                new LongOperation1().execute(serverURL1);
             } else {
                 Toast.makeText(LoginActivity.this, response.getResponse(), Toast.LENGTH_LONG).show();
             }
@@ -189,6 +194,105 @@ public class LoginActivity extends AppCompatActivity {
 //                               	SharedPreferences sp = getApplicationContext()
 
 
+        }
+        private class LongOperation1 extends AsyncTask<String, Void, Void> {
+
+            // Required initialization
+
+            // private final HttpClient Client = new DefaultHttpClient();
+            private String result;
+            private String Error = null;
+
+            String data = "";
+
+            int sizeData = 0;
+
+            protected void onPreExecute() {
+                JsonObject jsonObject = new JsonObject();
+                jsonObject.addProperty("dev_id",dev_id);
+                jsonObject.addProperty("reg_id", reg_id);
+                jsonObject.addProperty("name",eno);
+
+
+                Gson gson2 = new Gson();
+
+                String jsonString = gson2.toJson(jsonObject);
+                Log.i("hell", jsonString);
+
+                data +=jsonString;
+
+            }
+
+            // Call after onPreExecute method
+            protected Void doInBackground(String... urls) {
+
+                /************ Make Post Call To Web Server ***********/
+                HttpURLConnection httpcon;
+
+                try {
+
+                    httpcon = (HttpURLConnection) ((new URL("http://anip.xyz:8080/gcm/v1/device/register/").openConnection()));
+                    httpcon.setDoOutput(true);
+                    httpcon.setRequestProperty("Content-Type", "application/json");
+                    httpcon.setRequestProperty("Accept", "application/json");
+                    httpcon.setRequestMethod("POST");
+                    httpcon.connect();
+
+                    OutputStream os = httpcon.getOutputStream();
+                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                    writer.write(data);
+                    writer.close();
+                    os.close();
+                    Log.i("hel", String.valueOf(httpcon.getErrorStream()) + httpcon.getResponseMessage() + httpcon.getResponseCode());
+
+
+                    BufferedReader br = new BufferedReader(new InputStreamReader(httpcon.getInputStream(), "UTF-8"));
+                    code = httpcon.getResponseCode();
+                    String line;
+                    StringBuilder sb = new StringBuilder();
+
+                    while ((line = br.readLine()) != null) {
+                        sb.append(line);
+                    }
+
+                    br.close();
+                    Gson gson2 = new Gson();
+                    Log.i("he;;", sb.toString());
+
+                    result = sb.toString();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                // Append Server Response To Content String
+
+
+                /*****************************************************/
+                return null;
+            }
+
+            protected void onPostExecute(Void unused) {
+
+                if (Error != null) {
+                    // uiUpdate.setText("Output : " + Error);
+                    {
+                        Log.i("hell", Error.toString());
+                        Toast toast = Toast.makeText(LoginActivity.this,
+                                "No internet connection" + Error.toString(), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+
+                } else {
+                    if (code == 200) {
+                        Intent intent = new Intent(LoginActivity.this,Home.class);
+                        startActivity(intent);
+
+                        Toast toast = Toast.makeText(LoginActivity.this, "Success", Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+
+                }
+            }
         }
 
     }}
