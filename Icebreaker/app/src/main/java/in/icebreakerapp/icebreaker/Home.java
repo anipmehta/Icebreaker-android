@@ -1,5 +1,6 @@
 package in.icebreakerapp.icebreaker;
 
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -30,6 +31,7 @@ public class Home extends AppCompatActivity {
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
+    private FloatingActionButton fab;
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -57,12 +59,14 @@ public class Home extends AppCompatActivity {
         }
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+                Intent intent = new Intent(Home.this,AddContact.class);
+                startActivity(intent);
             }
         });
 
@@ -114,8 +118,9 @@ public class Home extends AppCompatActivity {
                 return ChatFragment.newInstance();
             else if(position == 0)
                 return RandomFragment.newInstance();
-            else
-                return PlaceHolderFragment.newInstance(position + 1);
+            else{
+                fab.setVisibility(View.VISIBLE);
+                return PlaceHolderFragment.newInstance(position + 1);}
         }
 
         @Override
