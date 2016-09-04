@@ -12,11 +12,13 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import in.icebreakerapp.icebreaker.fragments.ChatFragment;
+import in.icebreakerapp.icebreaker.fragments.ContactFragment;
 import in.icebreakerapp.icebreaker.fragments.PlaceHolderFragment;
 import in.icebreakerapp.icebreaker.fragments.RandomFragment;
 
@@ -66,8 +68,7 @@ public class Home extends AppCompatActivity {
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
                 Intent intent = new Intent(Home.this,AddContact.class);
-                startActivity(intent);
-            }
+                startActivityForResult(intent, 99);            }
         });
 
     }
@@ -118,9 +119,9 @@ public class Home extends AppCompatActivity {
                 return ChatFragment.newInstance();
             else if(position == 0)
                 return RandomFragment.newInstance();
-            else{
+            else {
                 fab.setVisibility(View.VISIBLE);
-                return PlaceHolderFragment.newInstance(position + 1);}
+                return ContactFragment.newInstance();}
         }
 
         @Override
@@ -140,6 +141,14 @@ public class Home extends AppCompatActivity {
                     return "Contacts";
             }
             return null;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 99 && resultCode == RESULT_OK) {
+//        ContactFragment.adapter.d;
         }
     }
 }

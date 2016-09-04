@@ -1,6 +1,8 @@
 package in.icebreakerapp.icebreaker;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,6 +26,9 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import in.icebreakerapp.icebreaker.fragments.ContactFragment;
+import in.icebreakerapp.icebreaker.helpers.MessageDb;
+import in.icebreakerapp.icebreaker.models.Contact;
 import in.icebreakerapp.icebreaker.models.SendMessage;
 
 /**
@@ -31,6 +36,7 @@ import in.icebreakerapp.icebreaker.models.SendMessage;
  */
 public class AddContact extends AppCompatActivity {
     private EditText search;
+    private MessageDb messageDb;
     private Button add;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -154,8 +160,13 @@ public class AddContact extends AppCompatActivity {
 
             Log.i("response", String.valueOf(response) + Error);
             if (response.getStatus().equalsIgnoreCase("found")) {
-//                Intent intent = new Intent(Lo.this, MainActivity.class);
-//                startActivity(intent);
+                messageDb =new MessageDb(AddContact.this);
+                messageDb.addContact(search.getText().toString());
+                Intent intent = getIntent();
+                setResult(Activity.RESULT_OK, intent);
+                finish();
+//
+                onBackPressed();
             } else {
                 Toast.makeText(AddContact.this, response.getStatus(), Toast.LENGTH_LONG).show();
             }
