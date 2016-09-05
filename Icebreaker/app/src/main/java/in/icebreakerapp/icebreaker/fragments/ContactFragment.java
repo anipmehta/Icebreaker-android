@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 
 import in.icebreakerapp.icebreaker.ChatActivity;
 import in.icebreakerapp.icebreaker.R;
+import in.icebreakerapp.icebreaker.RecyclerItemClickListener;
 import in.icebreakerapp.icebreaker.adapters.ContactsAdapter;
 import in.icebreakerapp.icebreaker.adapters.HomeChatAdapter;
 import in.icebreakerapp.icebreaker.helpers.MessageDb;
@@ -47,6 +48,14 @@ public class ContactFragment extends Fragment {
         recyclerView.setLayoutManager(mLayoutManager);
         adapter = new ContactsAdapter(getActivity(),db.getContact());
         recyclerView.setAdapter(adapter);
+        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent intent = new Intent(getActivity(),ChatActivity.class);
+                intent.putExtra("title",db.getContact().get(position).getEnroll());
+                startActivity(intent);
+            }
+        }));
         return rootView;
     }
 
@@ -55,7 +64,7 @@ public class ContactFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 99 && resultCode == getActivity().RESULT_OK) {
             adapter.notifyDataSetChanged();
-            Log.i("hell","enterd on fragn");
+            Log.i("hell","enterd on fragment");
 
         }
     }

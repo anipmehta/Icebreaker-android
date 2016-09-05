@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -48,6 +49,7 @@ public class ChatActivity extends ActionBarActivity {
     public static ChatAdapter adapter;
     Intent serviceIntent;
     BroadcastReceiver receiver;
+    String title;
     public static List<IcebreakerNotification> chatHistory;
     MessageDb db;
 
@@ -55,6 +57,9 @@ public class ChatActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        Intent intent = getIntent();
+        title = intent.getStringExtra("title");
+        setTitle(title);
         chatHistory = new ArrayList<IcebreakerNotification>();
         db =new MessageDb(ChatActivity.this);
 
@@ -177,10 +182,11 @@ public class ChatActivity extends ActionBarActivity {
             Dialog.show();
             // try{
             // Set Request parameter
+            SharedPreferences sp = getApplicationContext().getSharedPreferences("user", 0);
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("to", "oneplus");
+            jsonObject.addProperty("to", title);
             jsonObject.addProperty("message",messageET.getText().toString());
-            jsonObject.addProperty("from", "13103622");
+            jsonObject.addProperty("from", sp.getString("enroll",""));
 
 
             Gson gson2 = new Gson();

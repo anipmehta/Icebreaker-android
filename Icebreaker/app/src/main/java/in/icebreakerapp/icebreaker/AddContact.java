@@ -164,9 +164,10 @@ public class AddContact extends AppCompatActivity {
                 messageDb.addContact(search.getText().toString());
                 Intent intent = getIntent();
                 setResult(Activity.RESULT_OK, intent);
+                messageDb.close();
                 finish();
 //
-                onBackPressed();
+//                onBackPressed();
             } else {
                 Toast.makeText(AddContact.this, response.getStatus(), Toast.LENGTH_LONG).show();
             }

@@ -38,7 +38,6 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
 
         }
     }
-
     // Provide a suitable constructor (depends on the kind of dataset)
     public ContactsAdapter(String[] myDataset) {
         mDataset = myDataset;
@@ -64,6 +63,7 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
         holder.mTextView.setText(projects.get(position).getEnroll());
 
     }
+
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
