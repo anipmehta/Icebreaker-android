@@ -2,6 +2,9 @@ package in.icebreakerapp.icebreaker.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,10 +26,12 @@ public class ChatAdapter extends BaseAdapter {
 
     private final List<IcebreakerNotification> chatMessages;
     private Activity context;
+    private String title;
 
-    public ChatAdapter(Activity context, List<IcebreakerNotification> chatMessages) {
+    public ChatAdapter(Activity context, List<IcebreakerNotification> chatMessages,String title) {
         this.context = context;
         this.chatMessages = chatMessages;
+        this.title = title;
     }
 
     @Override
@@ -59,6 +64,7 @@ public class ChatAdapter extends BaseAdapter {
         LayoutInflater vi = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if (convertView == null) {
+
             convertView = vi.inflate(R.layout.list_item_chat_message, null);
             holder = createViewHolder(convertView);
             convertView.setTag(holder);
@@ -68,8 +74,25 @@ public class ChatAdapter extends BaseAdapter {
 
 //        boolean myMsg = chatMessage.getIsme() ;//Just a dummy check
         //to simulate whether it me or other sender
-//        setAlignment(holder, myMsg);
-        holder.txtMessage.setText(chatMessage.getMessage());
+        SharedPreferences sp = context.getSharedPreferences("user", 0);
+        Log.i("hell","kjkjk"+chatMessage.getFrom()+chatMessage.getTo());
+        if(chatMessage.getDeliver()==1)
+        holder.txtInfo.setText("Delivered");
+
+        else if(chatMessage.getDeliver()==0)
+            holder.txtInfo.setText("Sent");
+
+        if(chatMessage.getFrom().equalsIgnoreCase(sp.getString("enroll","")))
+        setAlignment(holder, true);
+        else
+        setAlignment(holder,false);
+        if(chatMessage.getFrom().equalsIgnoreCase(title) || chatMessage.getTo().equalsIgnoreCase(title)) {
+            holder.contentWithBG.setVisibility(View.VISIBLE);
+            holder.txtMessage.setText(chatMessage.getMessage());
+            holder.txtMessage.setMovementMethod(LinkMovementMethod.getInstance());
+        }
+        else
+        holder.contentWithBG.setVisibility(View.GONE);
 //        holder.txtInfo.setText(chatMessage.getDate());
 
         return convertView;

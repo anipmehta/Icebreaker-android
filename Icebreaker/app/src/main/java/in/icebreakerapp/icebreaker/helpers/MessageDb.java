@@ -30,7 +30,7 @@ public class MessageDb extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String query = "CREATE TABLE chat (receiver VARCHAR(8),sender VARCHAR(8),chat_id INTEGER PRIMARY KEY AUTOINCREMENT)";
-        String query2 = "CREATE TABLE messages(id INTEGER PRIMARY KEY,chat_id INTEGER,message TEXT NOT NULL,FOREIGN KEY(chat_id) REFERENCES chat(chat_id))";
+        String query2 = "CREATE TABLE messages(id INTEGER PRIMARY KEY,chat_id INTEGER,message TEXT NOT NULL,deliver INTEGER DEFAULT 0,message_id TEXT NOT NULL,FOREIGN KEY(chat_id) REFERENCES chat(chat_id))";
         String query3 = "CREATE TABLE contacts(id INTEGER PRIMARY KEY AUTOINCREMENT,enroll TEXT NOT NULL,status TEXT)";
         sqLiteDatabase.execSQL(query);
         sqLiteDatabase.execSQL(query2);
@@ -54,13 +54,14 @@ public class MessageDb extends SQLiteOpenHelper {
         db.insert("chat", null, values);
         db.close();
     }
-    public void addMessage(String data,int id){
+    public void addMessage(String data,int id,long message_id){
         SQLiteDatabase db = this.getWritableDatabase();
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         ContentValues values = new ContentValues();
         values.put("message", data);
         values.put("chat_id",id);
+        values.put("message_id",message_id);
         db.insert("messages", null, values);
         db.close();
     }
@@ -72,9 +73,12 @@ public class MessageDb extends SQLiteOpenHelper {
 //        Log.i("hell", String.valueOf(cursor.getColumnCount()));
         if (cursor.getCount()==0)
             return 0;
-        else
+        else {
+            cursor.moveToFirst();
             return cursor.getInt(2);
+        }
     }
+
     public void addContact(String enroll){
         SQLiteDatabase db = this.getWritableDatabase();
         Date date = new Date();
@@ -85,9 +89,9 @@ public class MessageDb extends SQLiteOpenHelper {
         db.close();
     }
 
-    public List<IcebreakerNotification> getTodayFoodItems() {
+    public List<IcebreakerNotification> getTodayFoodItems(int chatId) {
         List<IcebreakerNotification> messageList = new ArrayList<IcebreakerNotification>();
-        String selectQuery = "SELECT * FROM messages";
+        String selectQuery = "SELECT * FROM messages where chat_id="+chatId+"";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -96,7 +100,13 @@ public class MessageDb extends SQLiteOpenHelper {
             do {
                 IcebreakerNotification message = new IcebreakerNotification();
                 message.setMessage(cursor.getString(2));
-                Log.i("hell",cursor.getString(2));
+                String countQuery = "SELECT * FROM " + "chat where chat_id="+cursor.getString(1)+"";
+                Cursor curso2 = db.rawQuery(countQuery,null);
+                curso2.moveToFirst();
+                message.setFrom(curso2.getString(1));
+                message.setTo(curso2.getString(0));
+                message.setDeliver(Integer.parseInt(cursor.getString(3)));
+                Log.i("hell",cursor.getString(2) + message.getFrom()+ message.getTo());
                 messageList.add(message);
             } while (cursor.moveToNext());
         }
@@ -141,6 +151,11 @@ public class MessageDb extends SQLiteOpenHelper {
         }
 
         return messageList;
+    }
+    public void updateMessage(String id){
+        String selectQuery = "UPDATE messages SET deliver=1 WHERE message_id="+id+"";
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(selectQuery);
     }
 
 }

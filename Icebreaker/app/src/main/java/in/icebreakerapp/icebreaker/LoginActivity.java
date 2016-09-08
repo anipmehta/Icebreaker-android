@@ -1,12 +1,17 @@
 package in.icebreakerapp.icebreaker;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -31,6 +36,7 @@ import in.icebreakerapp.icebreaker.models.SignupStatus;
  * Created by anip on 12/08/16.
  */
 public class LoginActivity extends AppCompatActivity {
+    private static final int REQUEST_CODE_READ_PHONE_STATE = 13;
     private Button signup;
     private EditText eno_e;
     private EditText dob_e;
@@ -176,7 +182,19 @@ public class LoginActivity extends AppCompatActivity {
                 editor.putString("dob",dob);
                 editor.commit();
                 SharedPreferences sp2 = getApplicationContext().getSharedPreferences("deviceConfig",MODE_PRIVATE);
-                dev_id = sp2.getString("dev_id","");
+                int permissionCheck = ContextCompat.checkSelfPermission(LoginActivity.this,
+                        android.Manifest.permission.READ_PHONE_STATE);
+                if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(LoginActivity.this, new String[]{android.Manifest.permission.READ_PHONE_STATE},
+                    REQUEST_CODE_READ_PHONE_STATE);
+                    TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+                    dev_id = telephonyManager.getDeviceId();
+                    // define this constant yourself
+                } else {
+                    TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+                    dev_id = telephonyManager.getDeviceId();
+                    // you have the permission
+                }
                 reg_id = sp2.getString("token","");
                 String serverURL1 = "http://anip.xyz:8080/gcm/v1/device/register/";
                 new LongOperation1().execute(serverURL1);

@@ -168,7 +168,12 @@ public class AddContact extends AppCompatActivity {
                 finish();
 //
 //                onBackPressed();
-            } else {
+            }
+            else if (response.getStatus().equalsIgnoreCase("already")){
+                Intent intent = getIntent();
+                setResult(Activity.RESULT_OK, intent);
+                finish();
+            }else {
                 Toast.makeText(AddContact.this, response.getStatus(), Toast.LENGTH_LONG).show();
             }
 

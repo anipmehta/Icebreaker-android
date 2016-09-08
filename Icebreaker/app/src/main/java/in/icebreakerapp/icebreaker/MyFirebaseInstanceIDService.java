@@ -1,10 +1,16 @@
 package in.icebreakerapp.icebreaker;
 
+import android.*;
+import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -29,6 +35,7 @@ import java.net.URL;
 public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
 
     private static final String TAG = "MyFirebaseIIDService";
+    private static final int REQUEST_CODE_READ_PHONE_STATE = 21 ;
     private String refreshedToken;
     private String dev_id;
     private int code =0 ;
@@ -48,8 +55,16 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
     private void sendRegistrationToServer(String token) {
         //You can implement this method to store the token on your server
         //Not required for current project
-        TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
-        dev_id = telephonyManager.getDeviceId();
+        int permissionCheck = ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.READ_PHONE_STATE);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE},
+//                    REQUEST_CODE_READ_PHONE_STATE); // define this constant yourself
+        } else {
+            TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+            dev_id = telephonyManager.getDeviceId();
+            // you have the permission
+        }
         SharedPreferences sharedPreferences = this.getSharedPreferences("deviceConfig",MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("dev_id",dev_id);
