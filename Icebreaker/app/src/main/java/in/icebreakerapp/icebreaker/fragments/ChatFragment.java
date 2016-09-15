@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 
 import in.icebreakerapp.icebreaker.ChatActivity;
 import in.icebreakerapp.icebreaker.R;
+import in.icebreakerapp.icebreaker.RecyclerItemClickListener;
 import in.icebreakerapp.icebreaker.adapters.HomeChatAdapter;
 import in.icebreakerapp.icebreaker.helpers.MessageDb;
 
@@ -22,9 +24,11 @@ import in.icebreakerapp.icebreaker.helpers.MessageDb;
  * Created by anip on 26/08/16.
  */
 public class ChatFragment extends Fragment {
-    private ListView recyclerView;
+    private RecyclerView recyclerView;
     private HomeChatAdapter adapter;
     private MessageDb db;
+    private RecyclerView.LayoutManager mLayoutManager;
+
 
     public ChatFragment(){
 
@@ -41,17 +45,20 @@ public class ChatFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.i("hell","entered fragment");
         View rootView = inflater.inflate(R.layout.fragment_chat, container, false);
-        recyclerView = (ListView) rootView.findViewById(R.id.chat_list);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.contact_view);
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(mLayoutManager);
         db =new MessageDb(getActivity());
-        adapter = new HomeChatAdapter(db.getChats(),getActivity());
+        adapter = new HomeChatAdapter(getActivity(),db.getChats(getActivity().getSharedPreferences("user",0).getString("enroll","")),getActivity());
         recyclerView.setAdapter(adapter);
-        recyclerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        recyclerView.addOnItemTouchListener(new RecyclerItemClickListener(getActivity(), new RecyclerItemClickListener.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Intent intent = new Intent(getActivity(), ChatActivity.class);
+            public void onItemClick(View view, int position) {
+                Intent intent = new Intent(getActivity(),ChatActivity.class);
+                intent.putExtra("title",db.getContact().get(position).getEnroll());
                 startActivity(intent);
             }
-        });
+        }));
         return rootView;
     }
 }

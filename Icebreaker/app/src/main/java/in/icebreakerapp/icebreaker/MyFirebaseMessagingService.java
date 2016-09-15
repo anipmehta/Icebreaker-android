@@ -69,15 +69,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         else {
             jsonObject = new JsonObject();
             jsonObject.addProperty("to",message.getFrom());
-            jsonObject.addProperty("message","received");
             jsonObject.addProperty("from", remoteMessage.getFrom());
             jsonObject.addProperty("id",remoteMessage.getData().get("id"));
             jsonObject.addProperty("type","deliver");
             sendDeliver();
             Log.i("hell", String.valueOf(db.getChatId(message)));
-            if (db.getChatId(message) == 0)
+            if (db.getChatId(message) == 0){
                 db.addChat(message);
-            db.addMessage(message.getMessage(), db.getChatId(message),Long.parseLong(remoteMessage.getData().get("id")));
+                db.addContact(message.getFrom());
+            }
+
+            db.addMessage(message.getMessage(), db.getChatId(message),Long.parseLong(remoteMessage.getData().get("id")),0);
 //        ChatActivity.adapter.notifyDataSetChanged();
             if (isAppIsInBackground(this))
                 sendNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("message"), Integer.parseInt(remoteMessage.getData().get("id")));

@@ -3,6 +3,9 @@ package in.icebreakerapp.icebreaker.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Gravity;
@@ -82,18 +85,25 @@ public class ChatAdapter extends BaseAdapter {
         else if(chatMessage.getDeliver()==0)
             holder.txtInfo.setText("Sent");
 
-        if(chatMessage.getFrom().equalsIgnoreCase(sp.getString("enroll","")))
-        setAlignment(holder, true);
-        else
-        setAlignment(holder,false);
-        if(chatMessage.getFrom().equalsIgnoreCase(title) || chatMessage.getTo().equalsIgnoreCase(title)) {
+        if(chatMessage.getSendType()==0) {
+            setAlignment(holder, true);
+            holder.txtInfo.setVisibility(View.GONE);
+        }
+        else {
+            holder.txtInfo.setVisibility(View.VISIBLE);
+            if(chatMessage.getDeliver()==1)
+                holder.txtInfo.setText("Delivered");
+
+            else if(chatMessage.getDeliver()==0)
+                holder.txtInfo.setText("Sent");
+            setAlignment(holder, false);
+        }
+
             holder.contentWithBG.setVisibility(View.VISIBLE);
             holder.txtMessage.setText(chatMessage.getMessage());
             holder.txtMessage.setMovementMethod(LinkMovementMethod.getInstance());
-        }
-        else
-        holder.contentWithBG.setVisibility(View.GONE);
-//        holder.txtInfo.setText(chatMessage.getDate());
+
+        //        holder.txtInfo.setText(chatMessage.getDate());
 
         return convertView;
     }
@@ -108,8 +118,11 @@ public class ChatAdapter extends BaseAdapter {
 
     private void setAlignment(ViewHolder holder, boolean isMe) {
         if (!isMe) {
-            holder.contentWithBG.setBackgroundResource(R.drawable.in_message_bg);
 
+            holder.contentWithBG.setBackgroundResource(R.drawable.out_message_bg);
+            int tint = Color.parseColor("#0000FF"); // R.color.blue;
+
+            holder.contentWithBG.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
             LinearLayout.LayoutParams layoutParams =
                     (LinearLayout.LayoutParams) holder.contentWithBG.getLayoutParams();
             layoutParams.gravity = Gravity.RIGHT;
@@ -128,7 +141,8 @@ public class ChatAdapter extends BaseAdapter {
             layoutParams.gravity = Gravity.RIGHT;
             holder.txtInfo.setLayoutParams(layoutParams);
         } else {
-            holder.contentWithBG.setBackgroundResource(R.drawable.out_message_bg);
+            holder.contentWithBG.setBackgroundResource(R.drawable.in_message_bg);
+
 
             LinearLayout.LayoutParams layoutParams =
                     (LinearLayout.LayoutParams) holder.contentWithBG.getLayoutParams();

@@ -51,6 +51,7 @@ public class ChatActivity extends ActionBarActivity {
     Intent serviceIntent;
     BroadcastReceiver receiver;
     private long number;
+    private long fno;
     String title;
     public static List<IcebreakerNotification> chatHistory;
     MessageDb db;
@@ -96,12 +97,12 @@ public class ChatActivity extends ActionBarActivity {
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 String messageText = messageET.getText().toString();
                 if (TextUtils.isEmpty(messageText)) {
                     return;
                 }
-                String serverURL1 = "http://anip.xyz/icebreakerlogin.php";
-                new LongOperation2().execute(serverURL1);
+
 
                 number = (long) Math.floor(Math.random() * 900000000L) + 10000000L;
 
@@ -110,12 +111,13 @@ public class ChatActivity extends ActionBarActivity {
                 chatMessage.setMessage(messageText);
                 chatMessage.setTo(title);
                 chatMessage.setFrom(sp2.getString("enroll",""));
+                chatMessage.setSendType(1);
 //                chatMessage.setDate(DateFormat.getDateTimeInstance().format(new Date()));
                 chatMessage.setMe(true);
-
-                messageET.setText("");
-
                 displayMessage(chatMessage);
+                String serverURL1 = "http://anip.xyz/icebreakerlogin.php";
+                new LongOperation2().execute(serverURL1);
+
             }
         });
     }
@@ -128,7 +130,7 @@ public class ChatActivity extends ActionBarActivity {
         Log.i("hell", String.valueOf(db.getChatId(message)));
         if(db.getChatId(message)==0)
             db.addChat(message);
-        db.addMessage(message.getMessage(),db.getChatId(message),number);
+        db.addMessage(message.getMessage(),db.getChatId(message),fno=number,1);
     }
 
     private void scroll() {
@@ -154,10 +156,10 @@ public class ChatActivity extends ActionBarActivity {
         IcebreakerNotification notification = new IcebreakerNotification();
         notification.setFrom(title);
         notification.setTo(getSharedPreferences("user",0).getString("enroll",""));
-        chatHistory = db.getTodayFoodItems(db.getChatId(notification));
+        chatHistory = db.getTodayFoodItems(db.getChatId(notification),title,getSharedPreferences("user",0).getString("enroll",""));
 
 
-        adapter = new ChatAdapter(ChatActivity.this, db.getTodayFoodItems(db.getChatId(notification)),title);
+        adapter = new ChatAdapter(ChatActivity.this, db.getTodayFoodItems(db.getChatId(notification),title,getSharedPreferences("user",0).getString("enroll","")),title);
         messagesContainer.setAdapter(adapter);
 
 //        for(int i=0; i<chatHistory.size(); i++) {
@@ -203,7 +205,7 @@ public class ChatActivity extends ActionBarActivity {
             jsonObject.addProperty("message",messageET.getText().toString());
             jsonObject.addProperty("from", sp.getString("enroll",""));
             jsonObject.addProperty("time", System.currentTimeMillis());
-            jsonObject.addProperty("id",number);
+            jsonObject.addProperty("id",fno);
             jsonObject.addProperty("type","simple");
 
 

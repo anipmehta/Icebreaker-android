@@ -2,6 +2,7 @@ package in.icebreakerapp.icebreaker.helpers;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -22,15 +23,16 @@ import in.icebreakerapp.icebreaker.models.IcebreakerNotification;
 public class MessageDb extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "icebreaker";
-        public MessageDb(Context context) {
-            super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        }
+
+    public MessageDb(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
 
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String query = "CREATE TABLE chat (receiver VARCHAR(8),sender VARCHAR(8),chat_id INTEGER PRIMARY KEY AUTOINCREMENT)";
-        String query2 = "CREATE TABLE messages(id INTEGER PRIMARY KEY,chat_id INTEGER,message TEXT NOT NULL,deliver INTEGER DEFAULT 0,message_id TEXT NOT NULL,FOREIGN KEY(chat_id) REFERENCES chat(chat_id))";
+        String query2 = "CREATE TABLE messages(id INTEGER PRIMARY KEY,chat_id INTEGER,message TEXT NOT NULL,deliver INTEGER DEFAULT 0,send_type INTEGER DEFAULT 0,message_id TEXT NOT NULL,time TEXT,FOREIGN KEY(chat_id) REFERENCES chat(chat_id))";
         String query3 = "CREATE TABLE contacts(id INTEGER PRIMARY KEY AUTOINCREMENT,enroll TEXT NOT NULL,status TEXT)";
         sqLiteDatabase.execSQL(query);
         sqLiteDatabase.execSQL(query2);
@@ -44,42 +46,54 @@ public class MessageDb extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS contacts");
         onCreate(sqLiteDatabase);
     }
-    public void addChat(IcebreakerNotification data){
+
+    public void addChat(IcebreakerNotification data) {
         SQLiteDatabase db = this.getWritableDatabase();
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         ContentValues values = new ContentValues();
         values.put("receiver", data.getTo());
         values.put("sender", data.getFrom());
+
         db.insert("chat", null, values);
         db.close();
     }
-    public void addMessage(String data,int id,long message_id){
+
+    public void addMessage(String data, int id, long message_id, int type) {
         SQLiteDatabase db = this.getWritableDatabase();
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         ContentValues values = new ContentValues();
         values.put("message", data);
-        values.put("chat_id",id);
-        values.put("message_id",message_id);
+        values.put("chat_id", id);
+        values.put("message_id", message_id);
+        values.put("send_type", type);
         db.insert("messages", null, values);
         db.close();
     }
+
     public int getChatId(IcebreakerNotification data) {
-        String countQuery = "SELECT * FROM " + "chat where receiver=" + data.getTo() + " and sender=" + data.getFrom()+"";
-        Log.i("hell",countQuery);
+        String countQuery = "SELECT * FROM " + "chat where receiver=" + data.getTo() + " and sender=" + data.getFrom() + "";
+        Log.i("hell", countQuery);
+        String query2 = "SELECT * FROM " + "chat where receiver=" + data.getFrom() + " and sender=" + data.getTo() + "";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(countQuery, null);
+        Cursor cursor2 = db.rawQuery(query2, null);
 //        Log.i("hell", String.valueOf(cursor.getColumnCount()));
-        if (cursor.getCount()==0)
-            return 0;
-        else {
+        if (cursor.getCount() == 0) {
+            if (cursor2.getCount() == 0)
+                return 0;
+            else {
+                cursor2.moveToFirst();
+                return cursor2.getInt(2);
+            }
+        } else {
             cursor.moveToFirst();
             return cursor.getInt(2);
         }
     }
 
-    public void addContact(String enroll){
+    public void addContact(String enroll) {
         SQLiteDatabase db = this.getWritableDatabase();
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -89,9 +103,9 @@ public class MessageDb extends SQLiteOpenHelper {
         db.close();
     }
 
-    public List<IcebreakerNotification> getTodayFoodItems(int chatId) {
+    public List<IcebreakerNotification> getTodayFoodItems(int chatId, String to, String from) {
         List<IcebreakerNotification> messageList = new ArrayList<IcebreakerNotification>();
-        String selectQuery = "SELECT * FROM messages where chat_id="+chatId+"";
+        String selectQuery = "SELECT * FROM messages where chat_id=" + chatId + "";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -100,13 +114,15 @@ public class MessageDb extends SQLiteOpenHelper {
             do {
                 IcebreakerNotification message = new IcebreakerNotification();
                 message.setMessage(cursor.getString(2));
-                String countQuery = "SELECT * FROM " + "chat where chat_id="+cursor.getString(1)+"";
-                Cursor curso2 = db.rawQuery(countQuery,null);
-                curso2.moveToFirst();
-                message.setFrom(curso2.getString(1));
-                message.setTo(curso2.getString(0));
+//                String countQuery = "SELECT * FROM " + "chat where chat_id="+cursor.getString(1)+"";
+//                Cursor curso2 = db.rawQuery(countQuery,null);
+//                curso2.moveToFirst();
+                if (Integer.parseInt(cursor.getString(4)) == 1)
+                    message.setFrom(from);
+                message.setTo(to);
+                message.setSendType(Integer.parseInt(cursor.getString(4)));
                 message.setDeliver(Integer.parseInt(cursor.getString(3)));
-                Log.i("hell",cursor.getString(2) + message.getFrom()+ message.getTo());
+                Log.i("hell", cursor.getString(2) + message.getFrom() + message.getTo() + "type" + message.getSendType());
                 messageList.add(message);
             } while (cursor.moveToNext());
         }
@@ -114,7 +130,7 @@ public class MessageDb extends SQLiteOpenHelper {
         return messageList;
     }
 
-    public ArrayList<HomeChat> getChats() {
+    public ArrayList<HomeChat> getChats(String enroll) {
         ArrayList<HomeChat> messageList = new ArrayList<HomeChat>();
         String selectQuery = "SELECT * FROM chat";
 
@@ -124,14 +140,19 @@ public class MessageDb extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 HomeChat message = new HomeChat();
-                message.setTitle(cursor.getString(1));
-                Log.i("hell",cursor.getString(1));
+                if (cursor.getString(1).equalsIgnoreCase(enroll))
+                    message.setEnroll(cursor.getString(0));
+                else
+                    message.setEnroll(cursor.getString(1));
+                message.setChat_id(Integer.parseInt(cursor.getString(2)));
+                Log.i("hell", cursor.getString(1));
                 messageList.add(message);
             } while (cursor.moveToNext());
         }
 
         return messageList;
     }
+
     public ArrayList<Contact> getContact() {
         ArrayList<Contact> messageList = new ArrayList<Contact>();
         String selectQuery = "SELECT * FROM contacts";
@@ -145,17 +166,27 @@ public class MessageDb extends SQLiteOpenHelper {
             do {
                 Contact contact = new Contact();
                 contact.setEnroll(cursor.getString(1));
-                Log.i("hell",cursor.getString(1));
+                Log.i("hell", cursor.getString(1));
                 messageList.add(contact);
             } while (cursor.moveToNext());
         }
 
         return messageList;
     }
-    public void updateMessage(String id){
-        String selectQuery = "UPDATE messages SET deliver=1 WHERE message_id="+id+"";
+
+    public void updateMessage(String id) {
+        String selectQuery = "UPDATE messages SET deliver=1 WHERE message_id=" + id + "";
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL(selectQuery);
+    }
+
+    public String lastMessage(int id) {
+        String selectQuery = "SELECT * FROM messages where chat_id=" + id + "";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        cursor.moveToLast();
+        return cursor.getString(2);
     }
 
 }
