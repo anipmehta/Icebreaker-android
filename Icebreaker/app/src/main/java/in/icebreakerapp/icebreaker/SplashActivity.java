@@ -25,7 +25,7 @@ public class SplashActivity extends AppCompatActivity {
                 }finally{
                     SharedPreferences sharedPreferences =getSharedPreferences("user",0);
                     Intent intent;
-                    if(sharedPreferences.getString("enroll","").equalsIgnoreCase("")){
+                    if(sharedPreferences.getString("enroll","").equalsIgnoreCase("") ){
                         intent = new Intent(SplashActivity.this,LoginActivity.class);
                     }
                     else

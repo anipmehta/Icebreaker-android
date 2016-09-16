@@ -1,5 +1,7 @@
 package in.icebreakerapp.icebreaker;
 
+import android.*;
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -59,11 +61,54 @@ public class LoginActivity extends AppCompatActivity {
                 eno = eno_e.getText().toString();
                 dob = dob_e.getText().toString();
                 password = pass_e.getText().toString();
+                if (ContextCompat.checkSelfPermission(LoginActivity.this, android.Manifest.permission.READ_PHONE_STATE)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    // Should we show an explanation?
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(LoginActivity.this,
+                            android.Manifest.permission.READ_PHONE_STATE)) {
+                        // Show an expanation to the user *asynchronously* -- don't block
+                        // this thread waiting for the user's response! After the user
+                        // sees the explanation, try again to request the permission.
+                    } else {
+                        // No explanation needed, we can request the permission.
+                        ActivityCompat.requestPermissions(LoginActivity.this,
+                                new String[]{Manifest.permission.READ_PHONE_STATE},
+                                REQUEST_CODE_READ_PHONE_STATE);
+                    }
+                } else {
+                    // permission was granted, yay! Do the task you need to do.
 
-                String serverURL1 = "http://anip.xyz/icebreakerlogin.php";
-                new LongOperation2().execute(serverURL1);
+//                    int permissionCheck = ContextCompat.checkSelfPermission(LoginActivity.this,
+//                            android.Manifest.permission.READ_PHONE_STATE);
+//                    ActivityCompat.requestPermissions(LoginActivity.this, new String[]{android.Manifest.permission.READ_PHONE_STATE},
+//                            REQUEST_CODE_READ_PHONE_STATE);
+//                    while (true) {
+//                        if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+//                            break;
+//                        }
+//                    }
 
-            }
+                    String serverURL1 = "http://anip.xyz/icebreakerlogin.php";
+                    new LongOperation2().execute(serverURL1);
+
+                }
+//                eno = eno_e.getText().toString();
+//                dob = dob_e.getText().toString();
+//                password = pass_e.getText().toString();
+//                int permissionCheck = ContextCompat.checkSelfPermission(LoginActivity.this,
+//                        android.Manifest.permission.READ_PHONE_STATE);
+//                ActivityCompat.requestPermissions(LoginActivity.this, new String[]{android.Manifest.permission.READ_PHONE_STATE},
+//                        REQUEST_CODE_READ_PHONE_STATE);
+//                while (true) {
+//                    if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+//                        break;
+//                    }
+                }
+
+//                String serverURL1 = "http://anip.xyz/icebreakerlogin.php";
+//                new LongOperation2().execute(serverURL1);
+
+//            }
 
         });
 }
@@ -313,4 +358,23 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
 
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_READ_PHONE_STATE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the task you need to do.
+                    String serverURL1 = "http://anip.xyz/icebreakerlogin.php";
+                    new LongOperation2().execute(serverURL1);
+
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+        }
     }}
