@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -52,6 +53,7 @@ public class ChatActivity extends ActionBarActivity {
     BroadcastReceiver receiver;
     private long number;
     private long fno;
+    private long time;
     String title;
     public static List<IcebreakerNotification> chatHistory;
     MessageDb db;
@@ -81,6 +83,7 @@ public class ChatActivity extends ActionBarActivity {
 
             }
         };
+
     }
 
     private void initControls() {
@@ -93,6 +96,7 @@ public class ChatActivity extends ActionBarActivity {
         RelativeLayout container = (RelativeLayout) findViewById(R.id.container);
 //        companionLabel.setText("My Buddy");// Hard Coded
         loadDummyHistory();
+        scroll();
 
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,6 +124,7 @@ public class ChatActivity extends ActionBarActivity {
 
             }
         });
+
     }
 
     public void displayMessage(IcebreakerNotification message) {
@@ -130,7 +135,7 @@ public class ChatActivity extends ActionBarActivity {
         Log.i("hell", String.valueOf(db.getChatId(message)));
         if(db.getChatId(message)==0)
             db.addChat(message);
-        db.addMessage(message.getMessage(),db.getChatId(message),fno=number,1);
+        db.addMessage(message.getMessage(),db.getChatId(message),fno=number,1,time=System.currentTimeMillis());
     }
 
     private void scroll() {
@@ -162,6 +167,13 @@ public class ChatActivity extends ActionBarActivity {
         adapter = new ChatAdapter(ChatActivity.this, db.getTodayFoodItems(db.getChatId(notification),title,getSharedPreferences("user",0).getString("enroll","")),title);
         messagesContainer.setAdapter(adapter);
 
+
+        messagesContainer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Toast.makeText(getApplicationContext(),"Clicked on position"+i,Toast.LENGTH_LONG).show();
+            }
+        });
 //        for(int i=0; i<chatHistory.size(); i++) {
 //            IcebreakerNotification message = chatHistory.get(i);
 //            displayMessage(message);
@@ -195,8 +207,8 @@ public class ChatActivity extends ActionBarActivity {
 
             // }*/
 
-            Dialog.setMessage("Please wait..");
-            Dialog.show();
+//            Dialog.setMessage("Please wait..");
+//            Dialog.show();
             // try{
             // Set Request parameter
             SharedPreferences sp = getApplicationContext().getSharedPreferences("user", 0);
@@ -204,9 +216,10 @@ public class ChatActivity extends ActionBarActivity {
             jsonObject.addProperty("to", title);
             jsonObject.addProperty("message",messageET.getText().toString());
             jsonObject.addProperty("from", sp.getString("enroll",""));
-            jsonObject.addProperty("time", System.currentTimeMillis());
+            jsonObject.addProperty("time", time);
             jsonObject.addProperty("id",fno);
             jsonObject.addProperty("type","simple");
+            messageET.setText("");
 
 
             Gson gson2 = new Gson();

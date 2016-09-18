@@ -31,6 +31,8 @@
                 android:textColor="@color/background_material_light"/>
 
             <ListView
+                android:focusable="false"
+                android:focusableInTouchMode="false"
                 android:id="@+id/messagesContainer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -42,6 +44,8 @@
                 android:layout_marginTop="10dp"
                 android:listSelector="@android:color/transparent"
                 android:transcriptMode="alwaysScroll"
+
+                android:clickable="true"
                 android:divider="@null" />
 
             <TextView

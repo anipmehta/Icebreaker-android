@@ -32,7 +32,7 @@ public class MessageDb extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String query = "CREATE TABLE chat (receiver VARCHAR(8),sender VARCHAR(8),chat_id INTEGER PRIMARY KEY AUTOINCREMENT)";
-        String query2 = "CREATE TABLE messages(id INTEGER PRIMARY KEY,chat_id INTEGER,message TEXT NOT NULL,deliver INTEGER DEFAULT 0,send_type INTEGER DEFAULT 0,message_id TEXT NOT NULL,time TEXT,FOREIGN KEY(chat_id) REFERENCES chat(chat_id))";
+        String query2 = "CREATE TABLE messages(id INTEGER PRIMARY KEY,chat_id INTEGER,message TEXT NOT NULL,deliver INTEGER DEFAULT 0,send_type INTEGER DEFAULT 0,message_id TEXT NOT NULL,time INTEGER,FOREIGN KEY(chat_id) REFERENCES chat(chat_id))";
         String query3 = "CREATE TABLE contacts(id INTEGER PRIMARY KEY AUTOINCREMENT,enroll TEXT NOT NULL,status TEXT)";
         sqLiteDatabase.execSQL(query);
         sqLiteDatabase.execSQL(query2);
@@ -59,7 +59,7 @@ public class MessageDb extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void addMessage(String data, int id, long message_id, int type) {
+    public void addMessage(String data, int id, long message_id, int type,long time) {
         SQLiteDatabase db = this.getWritableDatabase();
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -68,6 +68,7 @@ public class MessageDb extends SQLiteOpenHelper {
         values.put("chat_id", id);
         values.put("message_id", message_id);
         values.put("send_type", type);
+        values.put("time",time);
         db.insert("messages", null, values);
         db.close();
     }
@@ -105,7 +106,7 @@ public class MessageDb extends SQLiteOpenHelper {
 
     public List<IcebreakerNotification> getTodayFoodItems(int chatId, String to, String from) {
         List<IcebreakerNotification> messageList = new ArrayList<IcebreakerNotification>();
-        String selectQuery = "SELECT * FROM messages where chat_id=" + chatId + "";
+        String selectQuery = "SELECT * FROM messages where chat_id=" + chatId + " ORDER BY time ASC";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);

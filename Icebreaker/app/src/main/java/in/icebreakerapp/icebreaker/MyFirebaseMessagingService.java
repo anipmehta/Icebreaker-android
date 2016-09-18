@@ -8,6 +8,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -43,6 +44,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "MyFirebaseMsgService";
     static final public String BROADCAST_ACTION = "com.pavan.broadcast";
     private JsonObject jsonObject=null;
+    private static final String ICEBREAKER = "icebreaker";
+    final static String GROUP_KEY_EMAILS = "group_key_emails";
 
 
     @Override
@@ -79,7 +82,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 db.addContact(message.getFrom());
             }
 
-            db.addMessage(message.getMessage(), db.getChatId(message),Long.parseLong(remoteMessage.getData().get("id")),0);
+            db.addMessage(message.getMessage(), db.getChatId(message),Long.parseLong(remoteMessage.getData().get("id")),0,Long.parseLong(remoteMessage.getData().get("time")));
 //        ChatActivity.adapter.notifyDataSetChanged();
             if (isAppIsInBackground(this))
                 sendNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("message"), Integer.parseInt(remoteMessage.getData().get("id")));
@@ -87,6 +90,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Intent intent;
         intent = new Intent(BROADCAST_ACTION);
         sendBroadcast(intent);
+        if (!remoteMessage.getData().get("type").equalsIgnoreCase("deliver")) {
+            final MediaPlayer mp = MediaPlayer.create(this, R.raw.sound);
+            mp.start();
+        }
 //        bindService(UpdaterService,null,null);
     }
 
@@ -104,6 +111,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setContentTitle(title)
                 .setContentText(messageBody)
                 .setAutoCancel(true)
+                .setGroupSummary(true)
+                .setGroup(GROUP_KEY_EMAILS)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent);
 
