@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import in.icebreakerapp.icebreaker.helpers.MessageDb;
 import in.icebreakerapp.icebreaker.models.IcebreakerNotification;
 import in.icebreakerapp.icebreaker.R;
 
@@ -30,11 +31,13 @@ public class ChatAdapter extends BaseAdapter {
     private final List<IcebreakerNotification> chatMessages;
     private Activity context;
     private String title;
+    MessageDb db;
 
     public ChatAdapter(Activity context, List<IcebreakerNotification> chatMessages,String title) {
         this.context = context;
         this.chatMessages = chatMessages;
         this.title = title;
+        db = new MessageDb(this.context);
     }
 
     @Override
@@ -78,9 +81,11 @@ public class ChatAdapter extends BaseAdapter {
 //        boolean myMsg = chatMessage.getIsme() ;//Just a dummy check
         //to simulate whether it me or other sender
         SharedPreferences sp = context.getSharedPreferences("user", 0);
+        db.updateRead(chatMessage.getId());
         Log.i("hell","kjkjk"+chatMessage.getFrom()+chatMessage.getTo());
         if(chatMessage.getDeliver()==1)
         holder.txtInfo.setText("Delivered");
+
 
         else if(chatMessage.getDeliver()==0)
             holder.txtInfo.setText("Sent");

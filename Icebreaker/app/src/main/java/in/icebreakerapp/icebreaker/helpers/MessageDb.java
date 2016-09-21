@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TreeSet;
 
 import in.icebreakerapp.icebreaker.models.Contact;
 import in.icebreakerapp.icebreaker.models.HomeChat;
@@ -32,7 +33,7 @@ public class MessageDb extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String query = "CREATE TABLE chat (receiver VARCHAR(8),sender VARCHAR(8),chat_id INTEGER PRIMARY KEY AUTOINCREMENT)";
-        String query2 = "CREATE TABLE messages(id INTEGER PRIMARY KEY,chat_id INTEGER,message TEXT NOT NULL,deliver INTEGER DEFAULT 0,send_type INTEGER DEFAULT 0,message_id TEXT NOT NULL,time INTEGER,FOREIGN KEY(chat_id) REFERENCES chat(chat_id))";
+        String query2 = "CREATE TABLE messages(id INTEGER PRIMARY KEY,chat_id INTEGER,message TEXT NOT NULL,deliver INTEGER DEFAULT 0,send_type INTEGER DEFAULT 0,message_id TEXT NOT NULL,time INTEGER,read INTEGER,FOREIGN KEY(chat_id) REFERENCES chat(chat_id))";
         String query3 = "CREATE TABLE contacts(id INTEGER PRIMARY KEY AUTOINCREMENT,enroll TEXT NOT NULL,status TEXT)";
         sqLiteDatabase.execSQL(query);
         sqLiteDatabase.execSQL(query2);
@@ -59,7 +60,7 @@ public class MessageDb extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void addMessage(String data, int id, long message_id, int type,long time) {
+    public void addMessage(String data, int id, long message_id, int type, long time, int read) {
         SQLiteDatabase db = this.getWritableDatabase();
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -68,7 +69,8 @@ public class MessageDb extends SQLiteOpenHelper {
         values.put("chat_id", id);
         values.put("message_id", message_id);
         values.put("send_type", type);
-        values.put("time",time);
+        values.put("time", time);
+        values.put("read", read);
         db.insert("messages", null, values);
         db.close();
     }
@@ -118,9 +120,11 @@ public class MessageDb extends SQLiteOpenHelper {
 //                String countQuery = "SELECT * FROM " + "chat where chat_id="+cursor.getString(1)+"";
 //                Cursor curso2 = db.rawQuery(countQuery,null);
 //                curso2.moveToFirst();
+//                updateRead(Integer.parseInt(cursor.getString(0)));
                 if (Integer.parseInt(cursor.getString(4)) == 1)
                     message.setFrom(from);
                 message.setTo(to);
+                message.setId(Integer.parseInt(cursor.getString(0)));
                 message.setSendType(Integer.parseInt(cursor.getString(4)));
                 message.setDeliver(Integer.parseInt(cursor.getString(3)));
                 Log.i("hell", cursor.getString(2) + message.getFrom() + message.getTo() + "type" + message.getSendType());
@@ -175,6 +179,13 @@ public class MessageDb extends SQLiteOpenHelper {
         return messageList;
     }
 
+    public void updateRead(int mId) {
+        String selectQuery = "UPDATE messages SET read=1 WHERE id=" + mId + "";
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(selectQuery);
+
+    }
+
     public void updateMessage(String id) {
         String selectQuery = "UPDATE messages SET deliver=1 WHERE message_id=" + id + "";
         SQLiteDatabase db = this.getWritableDatabase();
@@ -188,6 +199,27 @@ public class MessageDb extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, null);
         cursor.moveToLast();
         return cursor.getString(2);
+    }
+
+    public int unread() {
+        String selectQuery = "SELECT * FROM messages where read=0" + "";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        cursor.moveToLast();
+        return cursor.getCount();
+    }
+
+    public int unreadChat() {
+        String selectQuery = "SELECT * FROM messages where read=0" + "";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        TreeSet chats = new TreeSet();
+        if (cursor.moveToFirst()) {
+            do {
+                chats.add(cursor.getString(1));
+            } while (cursor.moveToNext());
+        }
+    return chats.size();
     }
 
 }

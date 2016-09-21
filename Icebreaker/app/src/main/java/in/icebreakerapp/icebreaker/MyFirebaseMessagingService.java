@@ -13,6 +13,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.renderscript.RenderScript;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -46,6 +47,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private JsonObject jsonObject=null;
     private static final String ICEBREAKER = "icebreaker";
     final static String GROUP_KEY_EMAILS = "group_key_emails";
+    int count = 0;
 
 
     @Override
@@ -82,11 +84,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 db.addContact(message.getFrom());
             }
 
-            db.addMessage(message.getMessage(), db.getChatId(message),Long.parseLong(remoteMessage.getData().get("id")),0,Long.parseLong(remoteMessage.getData().get("time")));
+            db.addMessage(message.getMessage(), db.getChatId(message),Long.parseLong(remoteMessage.getData().get("id")),0,Long.parseLong(remoteMessage.getData().get("time")),0);
 //        ChatActivity.adapter.notifyDataSetChanged();
-            if (isAppIsInBackground(this))
-                sendNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("message"), Integer.parseInt(remoteMessage.getData().get("id")));
-        }
+            if (isAppIsInBackground(this)) {
+
+                sendNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("message"), db.unread(),db.unreadChat());
+                db.close();
+            }
+            }
         Intent intent;
         intent = new Intent(BROADCAST_ACTION);
         sendBroadcast(intent);
@@ -99,17 +104,34 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     //This method is only generating push notification
     //It is same as we did in earlier posts
-    private void sendNotification(String title, String messageBody,int id) {
+    private void sendNotification(String title, String messageBody,int count,int chatcount) {
         Intent intent = new Intent(this, ChatActivity.class);
+        intent.putExtra("title",title);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, id, intent,
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        String message;
+        if(count<=1){
+            message = messageBody;
+        }
+        else{
+            if(chatcount==1)
+                message = count +" new messages ";
+            else {
+
+
+                message = count + " new messages from " + chatcount + " chats.";
+                title="Icebreaker";
+            }
+
+        }
+
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(title)
-                .setContentText(messageBody)
+                .setContentText(message)
                 .setAutoCancel(true)
                 .setGroupSummary(true)
                 .setGroup(GROUP_KEY_EMAILS)
@@ -119,7 +141,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(id, notificationBuilder.build());
+        notificationManager.notify(0, notificationBuilder.build());
     }
     private boolean isAppIsInBackground(Context context) {
         boolean isInBackground = true;

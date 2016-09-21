@@ -135,7 +135,7 @@ public class ChatActivity extends ActionBarActivity {
         Log.i("hell", String.valueOf(db.getChatId(message)));
         if(db.getChatId(message)==0)
             db.addChat(message);
-        db.addMessage(message.getMessage(),db.getChatId(message),fno=number,1,time=System.currentTimeMillis());
+        db.addMessage(message.getMessage(),db.getChatId(message),fno=number,1,time=System.currentTimeMillis(),1);
     }
 
     private void scroll() {

@@ -18,6 +18,7 @@ public class IcebreakerNotification implements Serializable {
     private int deliver;
     private int sendType;
     private long time;
+    private int id;
 
     public String getTo() {
         return to;
@@ -74,5 +75,13 @@ public class IcebreakerNotification implements Serializable {
 
     public void setTime(long time) {
         this.time = time;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
