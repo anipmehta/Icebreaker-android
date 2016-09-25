@@ -55,10 +55,13 @@ public class ChatFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 Intent intent = new Intent(getActivity(),ChatActivity.class);
-                intent.putExtra("title",db.getContact().get(position).getEnroll());
+                Log.i("hell_selected",
+
+                        String.valueOf(intent.putExtra("title",db.getChats(getActivity().getSharedPreferences("user",0).getString("enroll","")).get(position).getEnroll())));
                 startActivity(intent);
             }
         }));
+
         return rootView;
     }
 }

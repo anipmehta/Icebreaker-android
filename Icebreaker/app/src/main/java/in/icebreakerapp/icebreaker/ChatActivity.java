@@ -134,7 +134,8 @@ public class ChatActivity extends ActionBarActivity {
         MessageDb db = new MessageDb(ChatActivity.this);
         Log.i("hell", String.valueOf(db.getChatId(message)));
         if(db.getChatId(message)==0)
-            db.addChat(message);
+            db.addChat(message,System.currentTimeMillis());
+        db.updateChat(db.getChatId(message),System.currentTimeMillis());
         db.addMessage(message.getMessage(),db.getChatId(message),fno=number,1,time=System.currentTimeMillis(),1);
     }
 

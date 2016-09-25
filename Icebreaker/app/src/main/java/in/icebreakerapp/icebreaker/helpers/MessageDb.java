@@ -32,7 +32,7 @@ public class MessageDb extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String query = "CREATE TABLE chat (receiver VARCHAR(8),sender VARCHAR(8),chat_id INTEGER PRIMARY KEY AUTOINCREMENT)";
+        String query = "CREATE TABLE chat (receiver VARCHAR(8),sender VARCHAR(8),chat_id INTEGER PRIMARY KEY AUTOINCREMENT,lastActive INTEGER)";
         String query2 = "CREATE TABLE messages(id INTEGER PRIMARY KEY,chat_id INTEGER,message TEXT NOT NULL,deliver INTEGER DEFAULT 0,send_type INTEGER DEFAULT 0,message_id TEXT NOT NULL,time INTEGER,read INTEGER,FOREIGN KEY(chat_id) REFERENCES chat(chat_id))";
         String query3 = "CREATE TABLE contacts(id INTEGER PRIMARY KEY AUTOINCREMENT,enroll TEXT NOT NULL,status TEXT)";
         sqLiteDatabase.execSQL(query);
@@ -48,14 +48,14 @@ public class MessageDb extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
-    public void addChat(IcebreakerNotification data) {
+    public void addChat(IcebreakerNotification data,long lastActive) {
         SQLiteDatabase db = this.getWritableDatabase();
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         ContentValues values = new ContentValues();
         values.put("receiver", data.getTo());
         values.put("sender", data.getFrom());
-
+        values.put("lastActive",lastActive);
         db.insert("chat", null, values);
         db.close();
     }
@@ -137,7 +137,7 @@ public class MessageDb extends SQLiteOpenHelper {
 
     public ArrayList<HomeChat> getChats(String enroll) {
         ArrayList<HomeChat> messageList = new ArrayList<HomeChat>();
-        String selectQuery = "SELECT * FROM chat";
+        String selectQuery = "SELECT * FROM chat ORDER BY lastActive DESC";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -177,6 +177,11 @@ public class MessageDb extends SQLiteOpenHelper {
         }
 
         return messageList;
+    }
+    public void updateChat(int chat_id,long lastActive){
+        String selectQuery = "UPDATE chat SET lastActive="+lastActive+" WHERE chat_id=" + chat_id + "";
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(selectQuery);
     }
 
     public void updateRead(int mId) {

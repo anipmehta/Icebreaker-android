@@ -80,9 +80,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             sendDeliver();
             Log.i("hell", String.valueOf(db.getChatId(message)));
             if (db.getChatId(message) == 0){
-                db.addChat(message);
+                db.addChat(message,System.currentTimeMillis());
                 db.addContact(message.getFrom());
             }
+            db.updateChat(db.getChatId(message),System.currentTimeMillis());
 
             db.addMessage(message.getMessage(), db.getChatId(message),Long.parseLong(remoteMessage.getData().get("id")),0,Long.parseLong(remoteMessage.getData().get("time")),0);
 //        ChatActivity.adapter.notifyDataSetChanged();
