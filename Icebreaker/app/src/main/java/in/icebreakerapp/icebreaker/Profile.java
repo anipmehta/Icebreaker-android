@@ -1,7 +1,10 @@
 package in.icebreakerapp.icebreaker;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,6 +15,8 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.MultipartBuilder;
@@ -23,6 +28,7 @@ import com.squareup.okhttp.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
@@ -33,10 +39,13 @@ import java.net.UnknownHostException;
 public class Profile extends AppCompatActivity {
     private static String TAG =null;
     private static String enroll;
+    private ImageView imageView;
     private static final String URL_UPLOAD_IMAGE = "http://anip.xyz:8080/upload/";
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.profile);
+        imageView = (ImageView)findViewById(R.id.image);
         enroll = getSharedPreferences("user", 0).getString("enroll","");
 
         showImagePopup();
@@ -63,10 +72,14 @@ public class Profile extends AppCompatActivity {
             final MediaType MEDIA_TYPE = sourceImageFile.endsWith("png") ?
                     MediaType.parse("image/png") : MediaType.parse("image/jpeg");
 
+            Bitmap bmp = BitmapFactory.decodeFile(sourceFile.getAbsolutePath());
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            bmp.compress(Bitmap.CompressFormat.JPEG, 70, bos);
+
 
             RequestBody requestBody = new MultipartBuilder()
                     .type(MultipartBuilder.FORM)
-                    .addFormDataPart("picture",enroll+".png", RequestBody.create(MEDIA_TYPE, sourceFile))
+                    .addFormDataPart("picture",enroll+".png", RequestBody.create(MEDIA_TYPE, bos.toByteArray()))
                     .build();
 
             Request request = new Request.Builder()
@@ -89,7 +102,22 @@ public class Profile extends AppCompatActivity {
         // File System.
         final Intent galleryIntent = new Intent();
         galleryIntent.setType("image/*");
-        galleryIntent.setAction(Intent.ACTION_PICK);
+//        galleryIntent.setAction(Intent.ACTION_PICK);
+
+        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+// ******** code for crop image
+        galleryIntent.putExtra("crop", "true");
+        galleryIntent.putExtra("aspectX", 0);
+        galleryIntent.putExtra("aspectY", 0);
+        galleryIntent.putExtra("outputX", 200);
+        galleryIntent.putExtra("outputY", 150);
+        try {
+            galleryIntent.putExtra("return-data", true);
+        }
+        catch (ActivityNotFoundException e){
+            Toast.makeText(getApplicationContext(),"Error",Toast.LENGTH_LONG).show();
+        }
+        //start the activity - we handle returning in onActivityResult
 
         // Chooser of file system options.
         final Intent chooserIntent = Intent.createChooser(galleryIntent, "Please select");
@@ -103,6 +131,9 @@ public class Profile extends AppCompatActivity {
 //                Snackbar.make(findViewById(R.id.parentView), R.string.string_unable_to_pick_image, Snackbar.LENGTH_INDEFINITE).show();
                 return;
             }
+//            Bundle extras2 = data.getExtras();
+//            Bitmap photo = extras2.getParcelable("data");
+
             Uri selectedImageUri = data.getData();
             String[] filePathColumn = {MediaStore.Images.Media.DATA};
 
@@ -113,6 +144,8 @@ public class Profile extends AppCompatActivity {
                 Log.i("hell","enterd");
                 int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
                 final String imagePath = cursor.getString(columnIndex);
+                Bitmap bmp = BitmapFactory.decodeFile(imagePath);
+                imageView.setImageBitmap(bmp);
 //                uploadImage("abc",imagePath);
                     new AsyncTask<Void, Integer, Boolean>() {
 
