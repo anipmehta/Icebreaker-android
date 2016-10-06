@@ -5,6 +5,7 @@ import android.content.Context;
 import android.media.Image;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,11 +16,15 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import in.icebreakerapp.icebreaker.R;
 import in.icebreakerapp.icebreaker.helpers.MessageDb;
 import in.icebreakerapp.icebreaker.models.HomeChat;
+import in.icebreakerapp.icebreaker.models.IcebreakerNotification;
+import in.icebreakerapp.icebreaker.util.CircleTransform;
 
 /**
  * Created by anip on 28/08/16.
@@ -45,11 +50,16 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
     public TextView mTextView;
     public TextView message;
     private ImageView profile;
+    private TextView time;
+    private TextView count;
     public ViewHolder(View v) {
         super(v);
         mTextView = (TextView) v.findViewById(R.id.enroll);
         message = (TextView) v.findViewById(R.id.last);
         profile = (ImageView) v.findViewById(R.id.profile);
+        time = (TextView) v.findViewById(R.id.time);
+        count = (TextView) v.findViewById(R.id.count);
+
 //            mTextView = v;
 
     }
@@ -76,8 +86,22 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
+        int count=0;
+        IcebreakerNotification message = db.lastMessage(chats.get(position).getChat_id());
         holder.mTextView.setText(chats.get(position).getEnroll());
-        holder.message.setText(db.lastMessage(chats.get(position).getChat_id()));
+        holder.message.setText(message.getMessage());
+        if(compareDate(message.getTime()))
+            holder.time.setText(convertDate(message.getTime(),"hh:mm a"));
+        else
+            holder.time.setText(convertDate(message.getTime(),"dd/MM/yyyy "));
+        if((count = db.unreadTitle(chats.get(position).getChat_id())) >=1){
+            holder.count.setVisibility(View.VISIBLE);
+            holder.count.setText(String.valueOf(count));
+        }
+        else
+            holder.count.setVisibility(View.GONE);
+
+
         Log.i("hell_url","http://anip.xyz:8080/image/"+chats.get(position).getEnroll()+"/");
         Picasso.with(context)
                 .load("http://anip.xyz:8080/image/"+chats.get(position).getEnroll()+"/")
@@ -85,6 +109,7 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
 //                .centerCrop()
                 .fit()
                 .centerCrop()
+                .transform(new CircleTransform())
                 .placeholder(R.drawable.icebreaker)
                 .error(R.drawable.icebreaker)
                 .into(holder.profile);
@@ -97,4 +122,12 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
     public int getItemCount() {
         return chats.size();
     }
+    public String convertDate(long dateInMilliseconds,String dateFormat) {
+        return DateFormat.format(dateFormat, dateInMilliseconds).toString();
+    }
+    public boolean compareDate(long date){
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
+        return fmt.format(date).equals(fmt.format(System.currentTimeMillis()));
+    }
+
 }

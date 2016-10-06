@@ -8,9 +8,11 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -58,6 +60,7 @@ public class ChatActivity extends ActionBarActivity {
     public static List<IcebreakerNotification> chatHistory;
     MessageDb db;
     SharedPreferences sp2;
+    IcebreakerNotification chatMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,10 +68,20 @@ public class ChatActivity extends ActionBarActivity {
         setContentView(R.layout.activity_chat);
         Intent intent = getIntent();
         title = intent.getStringExtra("title");
-        setTitle(title);
+//        setTitle(title);
+
         sp2 = getApplicationContext().getSharedPreferences("user", 0);
         chatHistory = new ArrayList<IcebreakerNotification>();
         db =new MessageDb(ChatActivity.this);
+        ActionBar actionBar = getSupportActionBar();
+//        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+//        actionBar.setDisplayShowCustomEnabled(true);
+//
+//        LayoutInflater inflator = (LayoutInflater) this .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        View v = inflator.inflate(R.layout.custom_imageview, null);
+//        ((TextView)v.findViewById(R.id.chat_id)).setText(title);
+//        actionBar.setCustomView(v);
 
         initControls();
         receiver = new BroadcastReceiver() {
@@ -110,7 +123,7 @@ public class ChatActivity extends ActionBarActivity {
 
                 number = (long) Math.floor(Math.random() * 900000000L) + 10000000L;
 
-                IcebreakerNotification chatMessage = new IcebreakerNotification();
+                chatMessage = new IcebreakerNotification();
 //                chatMessage.setId(122);//dummy
                 chatMessage.setMessage(messageText);
                 chatMessage.setTo(title);
@@ -131,12 +144,7 @@ public class ChatActivity extends ActionBarActivity {
         adapter.add(message);
         adapter.notifyDataSetChanged();
         scroll();
-        MessageDb db = new MessageDb(ChatActivity.this);
-        Log.i("hell", String.valueOf(db.getChatId(message)));
-        if(db.getChatId(message)==0)
-            db.addChat(message,System.currentTimeMillis());
-        db.updateChat(db.getChatId(message),System.currentTimeMillis());
-        db.addMessage(message.getMessage(),db.getChatId(message),fno=number,1,time=System.currentTimeMillis(),1);
+
     }
 
     private void scroll() {
@@ -293,9 +301,15 @@ public class ChatActivity extends ActionBarActivity {
 
             Log.i("response", String.valueOf(response) + Error);
             if (response.getStatus().equalsIgnoreCase("true")) {
+
 //                Intent intent = new Intent(Lo.this, MainActivity.class);
 //                startActivity(intent);
-
+                MessageDb db = new MessageDb(ChatActivity.this);
+                Log.i("hell", String.valueOf(db.getChatId(chatMessage)));
+                if(db.getChatId(chatMessage)==0)
+                    db.addChat(chatMessage,System.currentTimeMillis());
+                db.updateChat(db.getChatId(chatMessage),response.getTime());
+                db.addMessage(chatMessage.getMessage(),db.getChatId(chatMessage),fno=number,1,response.getTime(),1);
             } else {
                 Toast.makeText(ChatActivity.this, response.getStatus(), Toast.LENGTH_LONG).show();
             }

@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.GET_TASKS"></uses-permission>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.CLEAR_APP_CACHE"/>
+    <uses-permission android:name="android.permission.READ_APP_CACHE"/>
 
 
     <application
@@ -55,16 +55,21 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".LoginActivity"
-            android:label="@string/title_activity_home"
+            android:label="@string/title_signup"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".Home"
-            android:label="@string/title_activity_home"
+            android:label="IceBreaker ."
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".Profile"
-            android:label="Profile"
+            android:name=".ImageUpload"
+            android:label="Upload"
+            android:theme="@style/AppTheme.NoActionBar"
             />
+        <activity android:name=".Profile"
+            android:theme="@style/AppTheme"
+            android:label="Profile"/>
 
     </application>
 

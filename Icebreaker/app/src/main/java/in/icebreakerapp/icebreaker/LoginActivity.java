@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -18,10 +19,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.Picasso;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -33,6 +37,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import in.icebreakerapp.icebreaker.models.SignupStatus;
+import in.icebreakerapp.icebreaker.util.CircleTransform;
 
 /**
  * Created by anip on 12/08/16.
@@ -47,19 +52,33 @@ public class LoginActivity extends AppCompatActivity {
     private int code;
     private String dev_id;
     private String reg_id;
+    private ImageView profile_image;
+    private FloatingActionButton button;
+    ImageView imageView;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
         signup = (Button) findViewById(R.id.btn_signup);
+        imageView = (ImageView) findViewById(R.id.image);
         eno_e = (EditText) findViewById(R.id.eno);
-        dob_e = (EditText) findViewById(R.id.dob);
+        button = (FloatingActionButton) findViewById(R.id.edit_image);
+//        dob_e = (EditText) findViewById(R.id.dob);
         pass_e = (EditText) findViewById(R.id.pass);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LoginActivity.this,ImageUpload.class);
+                startActivityForResult(intent,1010);
+            }
+        });
+        profile_image = (ImageView) findViewById(R.id.image);
+        Picasso.with(this).load("http://anip.xyz:8080/image/13103622/").transform(new CircleTransform()).into(profile_image);
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 eno = eno_e.getText().toString();
-                dob = dob_e.getText().toString();
+//                dob = dob_e.getText().toString();
                 password = pass_e.getText().toString();
                 if (ContextCompat.checkSelfPermission(LoginActivity.this, android.Manifest.permission.READ_PHONE_STATE)
                         != PackageManager.PERMISSION_GRANTED) {
@@ -147,7 +166,7 @@ public class LoginActivity extends AppCompatActivity {
             // Set Request parameter
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("eno", eno);
-            jsonObject.addProperty("dob", dob);
+            jsonObject.addProperty("dob", "");
             jsonObject.addProperty("password", password);
 
 
@@ -224,7 +243,7 @@ public class LoginActivity extends AppCompatActivity {
                 SharedPreferences sp = getApplicationContext().getSharedPreferences("user", 0);
                 SharedPreferences.Editor editor = sp.edit();
                 editor.putString("enroll",eno);
-                editor.putString("dob",dob);
+                editor.putString("dob","");
                 editor.commit();
                 SharedPreferences sp2 = getApplicationContext().getSharedPreferences("deviceConfig",MODE_PRIVATE);
                 int permissionCheck = ContextCompat.checkSelfPermission(LoginActivity.this,
@@ -377,4 +396,26 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
         }
-    }}
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.i("hell","http://anip.xyz:8080/image/"+getSharedPreferences("user",0).getString("enroll","")+"/");
+        if(requestCode == 1010 && resultCode==RESULT_OK){
+            Picasso.with(this)
+                    .load("http://anip.xyz:8080/image/"+getSharedPreferences("user",0).getString("enroll","")+"/")
+//                .resize(50, 50)
+//                .centerCrop()
+                    .fit()
+                    .memoryPolicy(MemoryPolicy.NO_CACHE)
+
+                    .centerCrop()
+                    .transform(new CircleTransform())
+                    .placeholder(R.drawable.icebreaker)
+                    .error(R.drawable.icebreaker)
+                    .into(imageView);
+        }
+    }
+    }
+

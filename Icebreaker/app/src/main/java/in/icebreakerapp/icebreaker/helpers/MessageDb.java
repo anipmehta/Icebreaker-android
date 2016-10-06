@@ -17,6 +17,7 @@ import java.util.TreeSet;
 import in.icebreakerapp.icebreaker.models.Contact;
 import in.icebreakerapp.icebreaker.models.HomeChat;
 import in.icebreakerapp.icebreaker.models.IcebreakerNotification;
+import in.icebreakerapp.icebreaker.models.RandomChat;
 
 /**
  * Created by anip on 24/08/16.
@@ -32,12 +33,14 @@ public class MessageDb extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String query = "CREATE TABLE chat (receiver VARCHAR(8),sender VARCHAR(8),chat_id INTEGER PRIMARY KEY AUTOINCREMENT,lastActive INTEGER)";
-        String query2 = "CREATE TABLE messages(id INTEGER PRIMARY KEY,chat_id INTEGER,message TEXT NOT NULL,deliver INTEGER DEFAULT 0,send_type INTEGER DEFAULT 0,message_id TEXT NOT NULL,time INTEGER,read INTEGER,FOREIGN KEY(chat_id) REFERENCES chat(chat_id))";
-        String query3 = "CREATE TABLE contacts(id INTEGER PRIMARY KEY AUTOINCREMENT,enroll TEXT NOT NULL,status TEXT)";
-        sqLiteDatabase.execSQL(query);
-        sqLiteDatabase.execSQL(query2);
-        sqLiteDatabase.execSQL(query3);
+        String chat = "CREATE TABLE chat (receiver VARCHAR(8),sender VARCHAR(8),chat_id INTEGER PRIMARY KEY AUTOINCREMENT,lastActive INTEGER)";
+        String messages = "CREATE TABLE messages(id INTEGER PRIMARY KEY,chat_id INTEGER,message TEXT NOT NULL,deliver INTEGER DEFAULT 0,send_type INTEGER DEFAULT 0,message_id TEXT NOT NULL,time INTEGER,read INTEGER,FOREIGN KEY(chat_id) REFERENCES chat(chat_id))";
+        String contacts = "CREATE TABLE contacts(id INTEGER PRIMARY KEY AUTOINCREMENT,enroll TEXT NOT NULL,status TEXT)";
+        String random = "CREATE TABLE random(id INTEGER PRIMARY KEY AUTOINCREMENT,enroll TEXT NOT NULL,batch TEXT NOT NULL,college TEXT,gender TEXT NOT NULL,time INTEGER)";
+        sqLiteDatabase.execSQL(chat);
+        sqLiteDatabase.execSQL(messages);
+        sqLiteDatabase.execSQL(contacts);
+        sqLiteDatabase.execSQL(random);
     }
 
     @Override
@@ -74,6 +77,18 @@ public class MessageDb extends SQLiteOpenHelper {
         db.insert("messages", null, values);
         db.close();
     }
+    public void addRandom(RandomChat random,Long time) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("enroll", random.getEnroll());
+        values.put("batch", random.getBatch());
+        values.put("college", random.getCollege());
+        values.put("gender", random.getGender());
+        values.put("time", time);
+        db.insert("random", null, values);
+        db.close();
+    }
+
 
     public int getChatId(IcebreakerNotification data) {
         String countQuery = "SELECT * FROM " + "chat where receiver=" + data.getTo() + " and sender=" + data.getFrom() + "";
@@ -197,13 +212,16 @@ public class MessageDb extends SQLiteOpenHelper {
         db.execSQL(selectQuery);
     }
 
-    public String lastMessage(int id) {
+    public IcebreakerNotification lastMessage(int id) {
         String selectQuery = "SELECT * FROM messages where chat_id=" + id + "";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         cursor.moveToLast();
-        return cursor.getString(2);
+        IcebreakerNotification message =new IcebreakerNotification();
+        message.setMessage(cursor.getString(2));
+        message.setTime(Long.parseLong(cursor.getString(6)));
+        return message;
     }
 
     public int unread() {
@@ -225,6 +243,13 @@ public class MessageDb extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
     return chats.size();
+    }
+    public int unreadTitle(int chat_id){
+        String selectQuery = "SELECT * FROM messages where read=0" + " and chat_id="+chat_id+"";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        return cursor.getCount();
     }
 
 }

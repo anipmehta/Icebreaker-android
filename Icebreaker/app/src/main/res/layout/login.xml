@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<LinearLayout
+    android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:background="@android:color/transparent">
+<ScrollView
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:fitsSystemWindows="true"
-    android:background="@color/colorPrimary">
+    android:fillViewport="false">
 
     <LinearLayout
         android:orientation="vertical"
@@ -14,29 +21,34 @@
         android:paddingLeft="24dp"
         android:paddingRight="24dp"
         android:weightSum="1">
-
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <ImageView
-            android:layout_width="213dp"
-            android:layout_height="270dp"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:id="@+id/image"
             android:src="@drawable/icebreaker"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="0.13" />
-
+            android:layout_weight="0.13"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" />
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:id="@+id/edit_image"
+            android:src="@drawable/camera"
+            app:backgroundTint="@color/colorPrimary"
+            android:layout_alignParentBottom="true"
+            android:layout_alignRight="@+id/image"
+            android:layout_alignEnd="@+id/image"
+             />
+    </RelativeLayout>
         <!--  Name Label -->
 
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Update Profile Picture"
-            android:id="@+id/button2"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="0.13" />
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_marginTop="30dp">
 
             <EditText android:id="@+id/eno"
                 android:layout_width="282dp"
@@ -45,80 +57,81 @@
                 android:hint="EnrollmentNo" />
 
             <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/icebreaker"
-                android:id="@+id/imageView3" />
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/account"
+                android:id="@+id/imageView3"
+                android:layout_alignParentTop="true"
+                android:layout_alignRight="@+id/eno"
+                android:layout_alignEnd="@+id/eno" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
         <!-- Email Label -->
 
         <!-- Password Label -->
 
-        <LinearLayout
-            android:orientation="horizontal"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp">
 
             <EditText
-                android:id="@+id/editText2"
+                android:id="@+id/pass"
                 android:layout_width="282dp"
                 android:layout_height="wrap_content"
-                android:inputType="number"
+                android:inputType="textPassword"
                 android:hint="Password" />
 
             <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/icebreaker"
-                android:id="@+id/imageView4" />
-        </LinearLayout>
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/keyicon"
+                android:layout_alignParentTop="true"
+                android:layout_alignRight="@+id/pass"
+                android:layout_alignEnd="@+id/pass" />
+        </RelativeLayout>
 
         <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:weightSum="1">
-
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0.25">
-
-                <RadioButton
-                    android:layout_width="90dp"
+            android:layout_marginTop="10dp"
+            android:layout_width="282dp"
+            android:layout_height="wrap_content">
+        <RadioButton
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Male"
-                    android:id="@+id/radioButton" />
-
-                <RadioButton
+            android:layout_margin="5dp"
+            android:padding="5dp"
+                    android:id="@+id/radioButton2" />
+            <RadioButton
+                android:layout_margin="5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Female"
-                    android:id="@+id/radioButton2" />
-            </LinearLayout>
+                    android:layout_alignParentRight="true"
+                    android:id="@+id/radioButton"
+                    android:checked="false"
+                android:padding="5dp"/>
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="61dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0.51">
-
-                <EditText
-                    android:layout_width="76dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/editText"
-                    android:hint="Batch" />
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/icebreaker"
-                    android:id="@+id/imageView2" />
-            </LinearLayout>
+            <EditText
+                android:layout_marginLeft="30dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/editText"
+                android:padding="5dp"
+                android:hint="Batch"
+                />
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="end"
+                android:src="@drawable/ic_group_work_black_48dp"/>
         </LinearLayout>
+
+
 
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_signup"
@@ -133,3 +146,4 @@
 
     </LinearLayout>
 </ScrollView>
+</LinearLayout>

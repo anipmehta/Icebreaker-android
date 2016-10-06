@@ -29,5 +29,6 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.3.0'
     compile 'com.google.firebase:firebase-messaging:9.0.2'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.isseiaoki:simplecropview:1.1.4'
 }
 apply plugin: 'com.google.gms.google-services'

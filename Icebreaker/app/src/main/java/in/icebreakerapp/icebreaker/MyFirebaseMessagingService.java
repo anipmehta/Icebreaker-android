@@ -35,6 +35,7 @@ import java.util.Date;
 import java.util.List;
 import in.icebreakerapp.icebreaker.helpers.MessageDb;
 import in.icebreakerapp.icebreaker.models.IcebreakerNotification;
+import in.icebreakerapp.icebreaker.models.RandomChat;
 import in.icebreakerapp.icebreaker.models.SendMessage;
 
 /**
@@ -71,6 +72,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             db.updateMessage(remoteMessage.getData().get("id"));
 
         }
+        else if(remoteMessage.getData().get("type").equalsIgnoreCase("random")){
+            sendNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("message"),1,1,1);
+            RandomChat randomChat;
+            Gson gson = new Gson();
+            randomChat = gson.fromJson(remoteMessage.getData().get("profile"),RandomChat.class);
+            db.addRandom(randomChat,Long.parseLong(remoteMessage.getData().get("time")));
+
+        }
         else {
             jsonObject = new JsonObject();
             jsonObject.addProperty("to",message.getFrom());
@@ -89,23 +98,25 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 //        ChatActivity.adapter.notifyDataSetChanged();
             if (isAppIsInBackground(this)) {
 
-                sendNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("message"), db.unread(),db.unreadChat());
+                sendNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("message"), db.unread(),db.unreadChat(),0);
                 db.close();
+            }
+            else
+            {
+                final MediaPlayer mp = MediaPlayer.create(this, R.raw.sound);
+                mp.start();
             }
             }
         Intent intent;
         intent = new Intent(BROADCAST_ACTION);
         sendBroadcast(intent);
-        if (!remoteMessage.getData().get("type").equalsIgnoreCase("deliver")) {
-            final MediaPlayer mp = MediaPlayer.create(this, R.raw.sound);
-            mp.start();
-        }
+
 //        bindService(UpdaterService,null,null);
     }
 
     //This method is only generating push notification
     //It is same as we did in earlier posts
-    private void sendNotification(String title, String messageBody,int count,int chatcount) {
+    private void sendNotification(String title, String messageBody,int count,int chatcount,int id) {
         Intent intent = new Intent(this, ChatActivity.class);
         intent.putExtra("title",title);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -142,7 +153,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(0, notificationBuilder.build());
+        notificationManager.notify(id, notificationBuilder.build());
     }
     private boolean isAppIsInBackground(Context context) {
         boolean isInBackground = true;

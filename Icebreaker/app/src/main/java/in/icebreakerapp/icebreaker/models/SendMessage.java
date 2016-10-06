@@ -10,6 +10,8 @@ import java.io.Serializable;
 public class SendMessage implements Serializable {
     @SerializedName("status")
     private String status;
+    @SerializedName("time")
+    private long time;
 
     public String getStatus() {
         return status;
@@ -17,5 +19,13 @@ public class SendMessage implements Serializable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
     }
 }
