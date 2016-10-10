@@ -1,5 +1,6 @@
 package in.icebreakerapp.icebreaker;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -57,6 +58,7 @@ public class ChatActivity extends ActionBarActivity {
     private long fno;
     private long time;
     String title;
+    Intent intent;
     public static List<IcebreakerNotification> chatHistory;
     MessageDb db;
     SharedPreferences sp2;
@@ -66,7 +68,7 @@ public class ChatActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-        Intent intent = getIntent();
+        intent = getIntent();
         title = intent.getStringExtra("title");
 //        setTitle(title);
 
@@ -349,7 +351,10 @@ public class ChatActivity extends ActionBarActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+//        setResult(Activity.RESULT_OK, intent);
+//        finish();
 //        finishAffinity();
     }
+
 }
 

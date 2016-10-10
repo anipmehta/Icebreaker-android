@@ -88,8 +88,28 @@ public class MessageDb extends SQLiteOpenHelper {
         db.insert("random", null, values);
         db.close();
     }
+    public RandomChat getRandom(){
+        RandomChat randomChat = new RandomChat();
+        String countQuery = "SELECT * FROM random ORDER BY time DESC";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        cursor.moveToFirst();
+        randomChat.setEnroll(cursor.getString(1));
+        randomChat.setBatch(cursor.getString(2));
+        randomChat.setCollege(cursor.getString(3));
+        randomChat.setGender(cursor.getString(4));
+        return randomChat;
+    }
 
-
+    public int getRandomCount(){
+        String countQuery = "SELECT * FROM random";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        if(cursor.getCount()>0)
+            return cursor.getCount();
+        else
+            return 0;
+    }
     public int getChatId(IcebreakerNotification data) {
         String countQuery = "SELECT * FROM " + "chat where receiver=" + data.getTo() + " and sender=" + data.getFrom() + "";
         Log.i("hell", countQuery);

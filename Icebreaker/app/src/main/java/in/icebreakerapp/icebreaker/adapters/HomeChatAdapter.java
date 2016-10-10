@@ -14,6 +14,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -93,7 +94,7 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
         if(compareDate(message.getTime()))
             holder.time.setText(convertDate(message.getTime(),"hh:mm a"));
         else
-            holder.time.setText(convertDate(message.getTime(),"dd/MM/yyyy "));
+            holder.time.setText(convertDate(message.getTime(),"dd/MM/yy "));
         if((count = db.unreadTitle(chats.get(position).getChat_id())) >=1){
             holder.count.setVisibility(View.VISIBLE);
             holder.count.setText(String.valueOf(count));
@@ -109,6 +110,7 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
 //                .centerCrop()
                 .fit()
                 .centerCrop()
+                .networkPolicy(NetworkPolicy.NO_CACHE)
                 .transform(new CircleTransform())
                 .placeholder(R.drawable.icebreaker)
                 .error(R.drawable.icebreaker)

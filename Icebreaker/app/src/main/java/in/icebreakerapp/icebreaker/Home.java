@@ -1,7 +1,10 @@
 package in.icebreakerapp.icebreaker;
 
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +17,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +33,7 @@ public class Home extends AppCompatActivity {
     private MessageDb db;
     public static ContactsAdapter adapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    BroadcastReceiver receiver;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -65,17 +70,16 @@ public class Home extends AppCompatActivity {
         if (tabLayout != null) {
             tabLayout.setupWithViewPager(mViewPager);
         }
-
-
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mViewPager.setCurrentItem(1);
+        receiver = new BroadcastReceiver() {
             @Override
-            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-                Intent intent = new Intent(Home.this,AddContact.class);
-                startActivityForResult(intent, 99);            }
-        });
+            public void onReceive(Context context, Intent intent) {
+                mSectionsPagerAdapter.notifyDataSetChanged();
+                mViewPager.setAdapter(mSectionsPagerAdapter);
+                mViewPager.setCurrentItem(1);
+            }
+        };
+
 
 
     }
@@ -129,7 +133,7 @@ public class Home extends AppCompatActivity {
             else if(position == 0)
                 return RandomFragment.newInstance();
             else {
-                fab.setVisibility(View.VISIBLE);
+//                fab.setVisibility(View.VISIBLE);
                 return ContactFragment.newInstance();}
         }
 
@@ -156,19 +160,20 @@ public class Home extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 99 && resultCode == RESULT_OK) {
-//        ContactFragment.adapter.d;
-            android.app.Fragment currentFragment = getFragmentManager().findFragmentByTag("ContactFragment");
-            FragmentTransaction fragTransaction = getFragmentManager().beginTransaction();
-            fragTransaction.detach(currentFragment);
-            fragTransaction.attach(currentFragment);
-            fragTransaction.commit();
-//            recyclerView = (RecyclerView) findViewById(R.id.contact_view);
-//            db =new MessageDb(this);
-//            mLayoutManager = new LinearLayoutManager(this);
-//            recyclerView.setLayoutManager(mLayoutManager);
-//            adapter = new ContactsAdapter(this,db.getContact());
-//            recyclerView.setAdapter(adapter);
-        }
+
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(receiver, new IntentFilter(
+                MyFirebaseMessagingService.BROADCAST_HOME));
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(receiver);
+    }
+
 }

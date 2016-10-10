@@ -58,10 +58,21 @@ public class ChatFragment extends Fragment {
                 Log.i("hell_selected",
 
                         String.valueOf(intent.putExtra("title",db.getChats(getActivity().getSharedPreferences("user",0).getString("enroll","")).get(position).getEnroll())));
-                startActivity(intent);
+                startActivityForResult(intent,80);
             }
         }));
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 80) {
+            adapter.notifyDataSetChanged();
+            recyclerView.setAdapter(adapter);
+            Log.i("hell_on result", "entered");
+        }
+
     }
 }

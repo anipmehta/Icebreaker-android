@@ -48,6 +48,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private JsonObject jsonObject=null;
     private static final String ICEBREAKER = "icebreaker";
     final static String GROUP_KEY_EMAILS = "group_key_emails";
+    final static public String BROADCAST_HOME = "in.icebreaker.home";
     int count = 0;
 
 
@@ -78,6 +79,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Gson gson = new Gson();
             randomChat = gson.fromJson(remoteMessage.getData().get("profile"),RandomChat.class);
             db.addRandom(randomChat,Long.parseLong(remoteMessage.getData().get("time")));
+
 
         }
         else {
@@ -110,6 +112,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Intent intent;
         intent = new Intent(BROADCAST_ACTION);
         sendBroadcast(intent);
+        Intent intent2;
+        intent2 = new Intent(BROADCAST_HOME);
+        sendBroadcast(intent2);
 
 //        bindService(UpdaterService,null,null);
     }
@@ -117,7 +122,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     //This method is only generating push notification
     //It is same as we did in earlier posts
     private void sendNotification(String title, String messageBody,int count,int chatcount,int id) {
-        Intent intent = new Intent(this, ChatActivity.class);
+        Intent intent = new Intent(this, Home.class);
         intent.putExtra("title",title);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
