@@ -25,6 +25,16 @@
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
                 android:maxWidth="240dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Time"
+                android:id="@+id/time"
+                android:textAlignment="center"
+                android:textColor="#5555"
+                android:layout_gravity="end|right|center_vertical"
+                android:textSize="10sp"
+                android:visibility="visible"/>
 
         </LinearLayout>
         <TextView

@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.SwitchCompat;
 import android.text.Spannable;
@@ -18,12 +19,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -39,6 +44,7 @@ import in.icebreakerapp.icebreaker.R;
 import in.icebreakerapp.icebreaker.adapters.HomeChatAdapter;
 import in.icebreakerapp.icebreaker.helpers.MessageDb;
 import in.icebreakerapp.icebreaker.models.SendMessage;
+import in.icebreakerapp.icebreaker.util.CircleTransform;
 
 /**
  * Created by anip on 31/08/16.
@@ -46,6 +52,8 @@ import in.icebreakerapp.icebreaker.models.SendMessage;
 public class RandomFragment extends Fragment {
     private MessageDb db;
     private SwitchCompat switchbtn;
+    private RelativeLayout random_found;
+    private ImageView found_image;
 
     public RandomFragment() {
 
@@ -64,7 +72,26 @@ public class RandomFragment extends Fragment {
         Log.i("hell", "entered fragment");
         View rootView = inflater.inflate(R.layout.fragment_random, container, false);
         db = new MessageDb(getActivity());
+        random_found = (RelativeLayout) rootView.findViewById(R.id.random_found);
         switchbtn = (SwitchCompat) rootView.findViewById(R.id._switch);
+        found_image = (ImageView) rootView.findViewById(R.id.random_image);
+        if(db.getRandomCount()>0) {
+            random_found.setVisibility(View.VISIBLE);
+            switchbtn.setVisibility(View.GONE);
+            Picasso.with(getContext())
+                    .load("http://anip.xyz:8080/image/"+db.getRandom().getEnroll()+"/")
+//                .resize(50, 50)
+//                .centerCrop()
+                    .fit()
+                    .centerCrop()
+//                    .networkPolicy(NetworkPolicy.OFFLINE)
+                    .transform(new CircleTransform())
+                    .placeholder(R.drawable.icebreaker)
+                    .error(R.drawable.icebreaker)
+                    .into(found_image);
+        }
+        else
+            random_found.setVisibility(View.GONE);
         switchbtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -81,6 +108,16 @@ public class RandomFragment extends Fragment {
             new LongOperation2().execute(serverURL1);
         }
         return rootView;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     private class LongOperation2 extends AsyncTask<String, Void, SendMessage> {
@@ -116,7 +153,7 @@ public class RandomFragment extends Fragment {
             // try{
             // Set Request parameter
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("enroll", "13103630");
+            jsonObject.addProperty("enroll", getActivity().getSharedPreferences("user",0).getString("enroll",""));
 
 
             Gson gson2 = new Gson();

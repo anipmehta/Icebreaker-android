@@ -101,7 +101,7 @@ public class ImageUpload extends AppCompatActivity {
         showImagePopup();
     }
 
-    private void prepareImage(Uri finalImage) {
+    private void prepareImage(final Uri finalImage) {
         Log.i("hell", String.valueOf(finalImage));
             Log.i("hell", "enterd");
             final String imagePath = String.valueOf(finalImage);
@@ -131,6 +131,7 @@ public class ImageUpload extends AppCompatActivity {
                     super.onPostExecute(aBoolean);
                     if(aBoolean) {
                         Intent intent = getIntent();
+                        intent.putExtra("file",finalImage.toString());
                         setResult(Activity.RESULT_OK, intent);
                         finish();
                     }

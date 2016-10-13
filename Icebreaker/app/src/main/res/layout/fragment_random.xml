@@ -10,5 +10,42 @@
         android:layout_margin="10dp"
         android:layout_gravity="center"
         android:theme="@style/MySwitch"/>
-
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/random_found"
+        android:visibility="visible">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="28sp"
+            android:text="Hola!!!"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="20dp"
+            android:id="@+id/ola"
+            android:gravity="center"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ola"
+            android:text="We have found a perfect match for you"
+            android:id="@+id/textView2"
+            android:gravity="center" />
+        <ImageView
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:id="@+id/random_image"
+            android:layout_margin="40dp"
+            android:src="@drawable/icebreaker"
+            android:layout_below="@+id/textView2"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="39dp" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start Chat"
+            android:layout_gravity="center_horizontal"
+            android:layout_below="@+id/random_image"
+            android:layout_centerHorizontal="true" />
+    </RelativeLayout>
 </LinearLayout>

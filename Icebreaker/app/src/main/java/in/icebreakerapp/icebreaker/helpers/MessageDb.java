@@ -88,8 +88,28 @@ public class MessageDb extends SQLiteOpenHelper {
         db.insert("random", null, values);
         db.close();
     }
+    public RandomChat getRandom(){
+        RandomChat randomChat = new RandomChat();
+        String countQuery = "SELECT * FROM random ORDER BY time DESC";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        cursor.moveToFirst();
+        randomChat.setEnroll(cursor.getString(1));
+        randomChat.setBatch(cursor.getString(2));
+        randomChat.setCollege(cursor.getString(3));
+        randomChat.setGender(cursor.getString(4));
+        return randomChat;
+    }
 
-
+    public int getRandomCount(){
+        String countQuery = "SELECT * FROM random";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(countQuery, null);
+        if(cursor.getCount()>0)
+            return cursor.getCount();
+        else
+            return 0;
+    }
     public int getChatId(IcebreakerNotification data) {
         String countQuery = "SELECT * FROM " + "chat where receiver=" + data.getTo() + " and sender=" + data.getFrom() + "";
         Log.i("hell", countQuery);
@@ -142,6 +162,7 @@ public class MessageDb extends SQLiteOpenHelper {
                 message.setId(Integer.parseInt(cursor.getString(0)));
                 message.setSendType(Integer.parseInt(cursor.getString(4)));
                 message.setDeliver(Integer.parseInt(cursor.getString(3)));
+                message.setTime(Long.parseLong(cursor.getString(6)));
                 Log.i("hell", cursor.getString(2) + message.getFrom() + message.getTo() + "type" + message.getSendType());
                 messageList.add(message);
             } while (cursor.moveToNext());
@@ -213,11 +234,11 @@ public class MessageDb extends SQLiteOpenHelper {
     }
 
     public IcebreakerNotification lastMessage(int id) {
-        String selectQuery = "SELECT * FROM messages where chat_id=" + id + "";
+        String selectQuery = "SELECT * FROM messages where chat_id=" + id + " ORDER BY time DESC";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
-        cursor.moveToLast();
+        cursor.moveToFirst();
         IcebreakerNotification message =new IcebreakerNotification();
         message.setMessage(cursor.getString(2));
         message.setTime(Long.parseLong(cursor.getString(6)));

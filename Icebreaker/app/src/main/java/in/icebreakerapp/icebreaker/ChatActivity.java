@@ -1,5 +1,6 @@
 package in.icebreakerapp.icebreaker;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
@@ -49,7 +51,7 @@ public class ChatActivity extends ActionBarActivity {
 
     private EditText messageET;
     private ListView messagesContainer;
-    private Button sendBtn;
+    private FloatingActionButton sendBtn;
     public static ChatAdapter adapter;
     Intent serviceIntent;
     BroadcastReceiver receiver;
@@ -57,6 +59,7 @@ public class ChatActivity extends ActionBarActivity {
     private long fno;
     private long time;
     String title;
+    Intent intent;
     public static List<IcebreakerNotification> chatHistory;
     MessageDb db;
     SharedPreferences sp2;
@@ -66,7 +69,7 @@ public class ChatActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-        Intent intent = getIntent();
+        intent = getIntent();
         title = intent.getStringExtra("title");
 //        setTitle(title);
 
@@ -102,7 +105,7 @@ public class ChatActivity extends ActionBarActivity {
     private void initControls() {
         messagesContainer = (ListView) findViewById(R.id.messagesContainer);
         messageET = (EditText) findViewById(R.id.messageEdit);
-        sendBtn = (Button) findViewById(R.id.chatSendButton);
+        sendBtn = (FloatingActionButton) findViewById(R.id.chatSendButton);
 
         TextView meLabel = (TextView) findViewById(R.id.meLbl);
         TextView companionLabel = (TextView) findViewById(R.id.friendLabel);
@@ -349,7 +352,10 @@ public class ChatActivity extends ActionBarActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+//        setResult(Activity.RESULT_OK, intent);
+//        finish();
 //        finishAffinity();
     }
+
 }
 

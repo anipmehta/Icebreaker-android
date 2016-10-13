@@ -162,10 +162,10 @@ public class AddContact extends AppCompatActivity {
             if (response.getStatus().equalsIgnoreCase("found")) {
                 messageDb =new MessageDb(AddContact.this);
                 messageDb.addContact(search.getText().toString());
-                Intent intent = getIntent();
-                setResult(Activity.RESULT_OK, intent);
+//                Intent intent = getIntent();
+//                setResult(Activity.RESULT_OK, intent);
                 messageDb.close();
-                finish();
+                onBackPressed();
 //
 //                onBackPressed();
             }

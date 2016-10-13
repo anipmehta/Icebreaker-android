@@ -1,14 +1,15 @@
-package in.icebreakerapp.icebreaker.models;
+package in.icebreakerapp.icebreaker;
+
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.internal.Streams;
 
 import com.google.gson.JsonObject;
-import com.google.gson.annotations.SerializedName;
-
 import java.io.Serializable;
 
 /**
  * Created by anip on 11/10/16.
  */
-public class SignupStatus implements Serializable {
+public class VerifyStatus implements Serializable {
     @SerializedName("status")
     private String status;
     @SerializedName("data")
@@ -21,6 +22,7 @@ public class SignupStatus implements Serializable {
     public void setStatus(String status) {
         this.status = status;
     }
+
 
     public JsonObject getProfile() {
         return profile;
