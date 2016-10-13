@@ -153,7 +153,7 @@ public class RandomFragment extends Fragment {
             // try{
             // Set Request parameter
             JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("enroll", "13103630");
+            jsonObject.addProperty("enroll", getActivity().getSharedPreferences("user",0).getString("enroll",""));
 
 
             Gson gson2 = new Gson();

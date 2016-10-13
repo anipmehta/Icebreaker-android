@@ -162,6 +162,7 @@ public class MessageDb extends SQLiteOpenHelper {
                 message.setId(Integer.parseInt(cursor.getString(0)));
                 message.setSendType(Integer.parseInt(cursor.getString(4)));
                 message.setDeliver(Integer.parseInt(cursor.getString(3)));
+                message.setTime(Long.parseLong(cursor.getString(6)));
                 Log.i("hell", cursor.getString(2) + message.getFrom() + message.getTo() + "type" + message.getSendType());
                 messageList.add(message);
             } while (cursor.moveToNext());
@@ -233,11 +234,11 @@ public class MessageDb extends SQLiteOpenHelper {
     }
 
     public IcebreakerNotification lastMessage(int id) {
-        String selectQuery = "SELECT * FROM messages where chat_id=" + id + "";
+        String selectQuery = "SELECT * FROM messages where chat_id=" + id + " ORDER BY time DESC";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
-        cursor.moveToLast();
+        cursor.moveToFirst();
         IcebreakerNotification message =new IcebreakerNotification();
         message.setMessage(cursor.getString(2));
         message.setTime(Long.parseLong(cursor.getString(6)));

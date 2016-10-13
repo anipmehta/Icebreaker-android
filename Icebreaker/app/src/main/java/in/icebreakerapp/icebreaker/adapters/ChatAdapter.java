@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.text.format.DateFormat;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Gravity;
@@ -17,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import in.icebreakerapp.icebreaker.helpers.MessageDb;
@@ -103,7 +105,10 @@ public class ChatAdapter extends BaseAdapter {
                 holder.txtInfo.setText("Sent");
             setAlignment(holder, false);
         }
-
+        if(compareDate(chatMessage.getTime()))
+            holder.time.setText(convertDate(chatMessage.getTime(),"hh:mm a"));
+        else
+            holder.time.setText(convertDate(chatMessage.getTime(),"dd/MM/yy "));
             holder.contentWithBG.setVisibility(View.VISIBLE);
             holder.txtMessage.setText(chatMessage.getMessage());
             holder.txtMessage.setMovementMethod(LinkMovementMethod.getInstance());
@@ -147,7 +152,7 @@ public class ChatAdapter extends BaseAdapter {
             holder.txtInfo.setLayoutParams(layoutParams);
         } else {
             holder.contentWithBG.setBackgroundResource(R.drawable.in_message_bg);
-
+//            holder.contentWithBG.getBackground().setColorFilter(context.getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_ATOP);
 
             LinearLayout.LayoutParams layoutParams =
                     (LinearLayout.LayoutParams) holder.contentWithBG.getLayoutParams();
@@ -175,6 +180,7 @@ public class ChatAdapter extends BaseAdapter {
         holder.content = (LinearLayout) v.findViewById(R.id.content);
         holder.contentWithBG = (LinearLayout) v.findViewById(R.id.contentWithBackground);
         holder.txtInfo = (TextView) v.findViewById(R.id.txtInfo);
+        holder.time = (TextView) v.findViewById(R.id.time);
         return holder;
     }
 
@@ -183,5 +189,13 @@ public class ChatAdapter extends BaseAdapter {
         public TextView txtInfo;
         public LinearLayout content;
         public LinearLayout contentWithBG;
+        public TextView time;
+    }
+    public String convertDate(long dateInMilliseconds,String dateFormat) {
+        return DateFormat.format(dateFormat, dateInMilliseconds).toString();
+    }
+    public boolean compareDate(long date){
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
+        return fmt.format(date).equals(fmt.format(System.currentTimeMillis()));
     }
 }

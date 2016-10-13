@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
@@ -50,7 +51,7 @@ public class ChatActivity extends ActionBarActivity {
 
     private EditText messageET;
     private ListView messagesContainer;
-    private Button sendBtn;
+    private FloatingActionButton sendBtn;
     public static ChatAdapter adapter;
     Intent serviceIntent;
     BroadcastReceiver receiver;
@@ -104,7 +105,7 @@ public class ChatActivity extends ActionBarActivity {
     private void initControls() {
         messagesContainer = (ListView) findViewById(R.id.messagesContainer);
         messageET = (EditText) findViewById(R.id.messageEdit);
-        sendBtn = (Button) findViewById(R.id.chatSendButton);
+        sendBtn = (FloatingActionButton) findViewById(R.id.chatSendButton);
 
         TextView meLabel = (TextView) findViewById(R.id.meLbl);
         TextView companionLabel = (TextView) findViewById(R.id.friendLabel);
