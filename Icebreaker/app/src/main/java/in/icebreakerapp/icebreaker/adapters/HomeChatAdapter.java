@@ -89,19 +89,26 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
         // - replace the contents of the view with that element
         int count=0;
         IcebreakerNotification message = db.lastMessage(chats.get(position).getChat_id());
-        holder.mTextView.setText(chats.get(position).getEnroll());
-        holder.message.setText(message.getMessage());
-        if(compareDate(message.getTime()))
-            holder.time.setText(convertDate(message.getTime(),"hh:mm a"));
-        else
-            holder.time.setText(convertDate(message.getTime(),"dd/MM/yy "));
-        if((count = db.unreadTitle(chats.get(position).getChat_id())) >=1){
-            holder.count.setVisibility(View.VISIBLE);
-            holder.count.setText(String.valueOf(count));
-        }
-        else
-            holder.count.setVisibility(View.GONE);
 
+
+            holder.mTextView.setText(chats.get(position).getEnroll());
+        if (message != null) {
+            holder.message.setText(message.getMessage());
+            if (compareDate(message.getTime()))
+                holder.time.setText(convertDate(message.getTime(), "hh:mm a"));
+            else
+                holder.time.setText(convertDate(message.getTime(), "dd/MM/yy "));
+            if ((count = db.unreadTitle(chats.get(position).getChat_id())) >= 1) {
+                holder.count.setVisibility(View.VISIBLE);
+                holder.count.setText(String.valueOf(count));
+            } else
+                holder.count.setVisibility(View.GONE);
+        }
+        else {
+            holder.count.setVisibility(View.GONE);
+            holder.time.setVisibility(View.GONE);
+            holder.message.setVisibility(View.GONE);
+        }
 
         Log.i("hell_url","http://anip.xyz:8080/image/"+chats.get(position).getEnroll()+"/");
         Picasso.with(context)

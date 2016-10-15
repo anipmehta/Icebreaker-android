@@ -238,11 +238,15 @@ public class MessageDb extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
-        cursor.moveToFirst();
-        IcebreakerNotification message =new IcebreakerNotification();
-        message.setMessage(cursor.getString(2));
-        message.setTime(Long.parseLong(cursor.getString(6)));
-        return message;
+        if(cursor.getCount()!=0) {
+            cursor.moveToFirst();
+            IcebreakerNotification message = new IcebreakerNotification();
+            message.setMessage(cursor.getString(2));
+            message.setTime(Long.parseLong(cursor.getString(6)));
+            return message;
+        }
+        else
+            return null;
     }
 
     public int unread() {
@@ -271,6 +275,11 @@ public class MessageDb extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         return cursor.getCount();
+    }
+    public void deleteMessage(int message_id){
+        String selectQuery = "DELETE FROM messages WHERE id=" + message_id + "";
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(selectQuery);
     }
 
 }
