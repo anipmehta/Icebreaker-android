@@ -6,7 +6,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:descendantFocusability="blocksDescendants">
 
 
         <LinearLayout
@@ -17,14 +18,22 @@
             android:background="@drawable/in_message_bg"
             android:paddingLeft="10dp"
             android:paddingBottom="10dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:descendantFocusability="blocksDescendants">
 
             <TextView
                 android:id="@+id/txtMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
-                android:maxWidth="240dp" />
+                android:maxWidth="240dp"
+                android:focusableInTouchMode="false"
+                android:clickable="false"
+                android:focusable="false"
+                />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -34,7 +43,11 @@
                 android:textColor="#5555"
                 android:layout_gravity="end|right|center_vertical"
                 android:textSize="10sp"
-                android:visibility="visible"/>
+                android:visibility="visible"
+                android:clickable="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                />
 
         </LinearLayout>
         <TextView
@@ -43,7 +56,9 @@
             android:layout_height="30sp"
             android:layout_gravity="right"
             android:textSize="12sp"
-            android:textColor="@android:color/darker_gray" />
+            android:textColor="@android:color/darker_gray"
+            android:focusableInTouchMode="true"
+            />
 
     </LinearLayout>
 </RelativeLayout>

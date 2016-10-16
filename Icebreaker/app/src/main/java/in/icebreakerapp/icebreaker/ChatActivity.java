@@ -3,6 +3,8 @@ package in.icebreakerapp.icebreaker;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -15,6 +17,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -64,6 +69,8 @@ public class ChatActivity extends ActionBarActivity {
     MessageDb db;
     SharedPreferences sp2;
     IcebreakerNotification chatMessage;
+    private Menu menu;
+    ClipboardManager myClipboard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +86,9 @@ public class ChatActivity extends ActionBarActivity {
         ActionBar actionBar = getSupportActionBar();
 //        actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(false);
+
+        myClipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
 //        actionBar.setDisplayShowCustomEnabled(true);
 //
 //        LayoutInflater inflator = (LayoutInflater) this .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -170,7 +180,7 @@ public class ChatActivity extends ActionBarActivity {
 //        msg1.setMessage("How r u doing???");
 //        msg1.setDate(DateFormat.getDateTimeInstance().format(new Date()));
 //        chatHistory.add(msg1);
-        IcebreakerNotification notification = new IcebreakerNotification();
+        final IcebreakerNotification notification = new IcebreakerNotification();
         notification.setFrom(title);
         notification.setTo(getSharedPreferences("user",0).getString("enroll",""));
         chatHistory = db.getTodayFoodItems(db.getChatId(notification),title,getSharedPreferences("user",0).getString("enroll",""));
@@ -180,16 +190,48 @@ public class ChatActivity extends ActionBarActivity {
         messagesContainer.setAdapter(adapter);
 
 
-        messagesContainer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        messagesContainer.setOnItemLongClickListener((new AdapterView.OnItemLongClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getApplicationContext(),"Clicked on position"+i,Toast.LENGTH_LONG).show();
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
+//                Toast.makeText(getApplicationContext(), "Clicked on position" + i, Toast.LENGTH_LONG).show();
+                final MenuItem delete = menu.findItem(R.id.nav_delete);
+                final MenuItem copy = menu.findItem(R.id.nav_copy);
+                delete.setVisible(true);
+                copy.setVisible(true);
+                copy.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        ClipData myClip;
+                        myClip = ClipData.newPlainText("text", db.getTodayFoodItems(db.getChatId(notification),title,getSharedPreferences("user",0).getString("enroll","")).get(i).getMessage());
+                        myClipboard.setPrimaryClip(myClip);
+                        delete.setVisible(false);
+                        copy.setVisible(false);
+                        return false;
+                    }
+                });
+                delete.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        if(i!=0)
+                db.deleteMessage(db.getTodayFoodItems(db.getChatId(notification),title,getSharedPreferences("user",0).getString("enroll","")).get(i).getId());
+                else
+                db.deleteMessage(db.getTodayFoodItems(db.getChatId(notification),title,getSharedPreferences("user",0).getString("enroll","")).get(0).getId());
+                loadDummyHistory();
+                        scroll();
+                        delete.setVisible(false);
+                        copy.setVisible(false);
+                   return false;
+                    }
+                });
+//
+                return true;
             }
-        });
 //        for(int i=0; i<chatHistory.size(); i++) {
 //            IcebreakerNotification message = chatHistory.get(i);
 //            displayMessage(message);
-//        }
+//
+// }
+        }));
     }
     private class LongOperation2 extends AsyncTask<String, Void, SendMessage> {
 
@@ -357,5 +399,12 @@ public class ChatActivity extends ActionBarActivity {
 //        finishAffinity();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.activity_main_actions, menu);
+        this.menu = menu;
+        return super.onCreateOptionsMenu(menu);
+    }
 }
 
