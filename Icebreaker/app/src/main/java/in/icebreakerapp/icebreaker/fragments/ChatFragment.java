@@ -69,7 +69,8 @@ public class ChatFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 80) {
-            adapter.notifyDataSetChanged();
+            recyclerView.removeAllViews();
+            adapter = new HomeChatAdapter(getActivity(),db.getChats(getActivity().getSharedPreferences("user",0).getString("enroll","")),getActivity());
             recyclerView.setAdapter(adapter);
             Log.i("hell_on result", "entered");
         }

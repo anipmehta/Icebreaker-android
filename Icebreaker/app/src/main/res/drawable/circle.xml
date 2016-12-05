@@ -3,6 +3,6 @@
     <solid
         android:color="@color/colorPrimaryDark"/>
     <size
-        android:width="20dp"
-        android:height="20dp"/>
+        android:width="15dp"
+        android:height="15dp"/>
 </shape>

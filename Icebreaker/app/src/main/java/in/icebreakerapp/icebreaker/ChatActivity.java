@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -192,26 +193,34 @@ public class ChatActivity extends ActionBarActivity {
 
         messagesContainer.setOnItemLongClickListener((new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, final int i, long l) {
+            public boolean onItemLongClick(final AdapterView<?> adapterView, final View view, final int i, long l) {
 //                Toast.makeText(getApplicationContext(), "Clicked on position" + i, Toast.LENGTH_LONG).show();
                 final MenuItem delete = menu.findItem(R.id.nav_delete);
                 final MenuItem copy = menu.findItem(R.id.nav_copy);
                 delete.setVisible(true);
+//                Log.i("hell", String.valueOf(adapterView.findViewById(R.id.chat_back)));
+//                Log.i("hell", String.valueOf(view.getParent()));
+//                Log.i("hell", String.valueOf(adapterView.getSelectedView().findViewById(R.id.chat_back)));
+                final RelativeLayout chat_back = (RelativeLayout)view.findViewById(R.id.chat_back);
+                        chat_back.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                 copy.setVisible(true);
                 copy.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
+
                         ClipData myClip;
                         myClip = ClipData.newPlainText("text", db.getTodayFoodItems(db.getChatId(notification),title,getSharedPreferences("user",0).getString("enroll","")).get(i).getMessage());
                         myClipboard.setPrimaryClip(myClip);
                         delete.setVisible(false);
                         copy.setVisible(false);
+                       chat_back.setBackgroundColor(getResources().getColor(R.color.colorAccent));
                         return false;
                     }
                 });
                 delete.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
+//                        view.findViewById(R.id.chat_back).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                         if(i!=0)
                 db.deleteMessage(db.getTodayFoodItems(db.getChatId(notification),title,getSharedPreferences("user",0).getString("enroll","")).get(i).getId());
                 else
@@ -220,6 +229,7 @@ public class ChatActivity extends ActionBarActivity {
                         scroll();
                         delete.setVisible(false);
                         copy.setVisible(false);
+                        chat_back.setBackgroundColor(getResources().getColor(R.color.colorAccent));
                    return false;
                     }
                 });

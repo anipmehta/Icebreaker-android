@@ -35,7 +35,7 @@ public class MessageDb extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String chat = "CREATE TABLE chat (receiver VARCHAR(8),sender VARCHAR(8),chat_id INTEGER PRIMARY KEY AUTOINCREMENT,lastActive INTEGER)";
         String messages = "CREATE TABLE messages(id INTEGER PRIMARY KEY,chat_id INTEGER,message TEXT NOT NULL,deliver INTEGER DEFAULT 0,send_type INTEGER DEFAULT 0,message_id TEXT NOT NULL,time INTEGER,read INTEGER,FOREIGN KEY(chat_id) REFERENCES chat(chat_id))";
-        String contacts = "CREATE TABLE contacts(id INTEGER PRIMARY KEY AUTOINCREMENT,enroll TEXT NOT NULL,status TEXT)";
+        String contacts = "CREATE TABLE contacts(id INTEGER PRIMARY KEY AUTOINCREMENT,enroll TEXT NOT NULL,batch TEXT NOT NULL,college TEXT,gender TEXT NOT NULL,status TEXT)";
         String random = "CREATE TABLE random(id INTEGER PRIMARY KEY AUTOINCREMENT,enroll TEXT NOT NULL,batch TEXT NOT NULL,college TEXT,gender TEXT NOT NULL,time INTEGER)";
         sqLiteDatabase.execSQL(chat);
         sqLiteDatabase.execSQL(messages);
@@ -131,12 +131,16 @@ public class MessageDb extends SQLiteOpenHelper {
         }
     }
 
-    public void addContact(String enroll) {
+    public void addContact(RandomChat randomChat) {
         SQLiteDatabase db = this.getWritableDatabase();
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         ContentValues values = new ContentValues();
-        values.put("enroll", enroll);
+        values.put("enroll", randomChat.getEnroll());
+        values.put("batch", randomChat.getBatch());
+        values.put("college", randomChat.getCollege());
+        values.put("gender", randomChat.getGender());
+        values.put("status", randomChat.getStatus());
         db.insert("contacts", null, values);
         db.close();
     }
@@ -207,12 +211,28 @@ public class MessageDb extends SQLiteOpenHelper {
             do {
                 Contact contact = new Contact();
                 contact.setEnroll(cursor.getString(1));
+                contact.setBatch(cursor.getString(2));
+                contact.setCollege(cursor.getString(3));
+                contact.setGender(cursor.getString(4));
+                contact.setStatus(cursor.getString(5));
                 Log.i("hell", cursor.getString(1));
                 messageList.add(contact);
             } while (cursor.moveToNext());
         }
 
         return messageList;
+    }
+    public int lastRead(){
+        String selectQuery = "SELECT * FROM messages where read=0 ORDER BY time ASC";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if(cursor.getCount()>0){
+        cursor.moveToFirst();
+        return Integer.parseInt(cursor.getString(0));}
+        else
+            return 0123;
+
     }
     public void updateChat(int chat_id,long lastActive){
         String selectQuery = "UPDATE chat SET lastActive="+lastActive+" WHERE chat_id=" + chat_id + "";

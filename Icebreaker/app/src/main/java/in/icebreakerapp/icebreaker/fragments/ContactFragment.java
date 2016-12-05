@@ -49,7 +49,7 @@ public class ContactFragment extends Fragment {
         db =new MessageDb(getActivity());
         mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
-        adapter = new ContactsAdapter(getActivity(),db.getContact());
+        adapter = new ContactsAdapter(getActivity(),db.getContact(),getActivity());
         recyclerView.setAdapter(adapter);
         fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
