@@ -29,6 +29,8 @@ import java.net.URL;
 import in.icebreakerapp.icebreaker.fragments.ContactFragment;
 import in.icebreakerapp.icebreaker.helpers.MessageDb;
 import in.icebreakerapp.icebreaker.models.Contact;
+import in.icebreakerapp.icebreaker.models.ContactModel;
+import in.icebreakerapp.icebreaker.models.RandomChat;
 import in.icebreakerapp.icebreaker.models.SendMessage;
 
 /**
@@ -52,14 +54,14 @@ public class AddContact extends AppCompatActivity {
             }
         });
     }
-    private class LongOperation2 extends AsyncTask<String, Void, SendMessage> {
+    private class LongOperation2 extends AsyncTask<String, Void, ContactModel> {
 
         // Required initialization
 
         // private final HttpClient Client = new DefaultHttpClient();
         // private String Content;
         private String Error = null;
-        private SendMessage result;
+        private ContactModel result;
         String studentId;
         private ProgressDialog Dialog = new ProgressDialog(AddContact.this);
         String data = "";
@@ -86,8 +88,8 @@ public class AddContact extends AppCompatActivity {
             // Set Request parameter
             JsonObject jsonObject = new JsonObject();
             SharedPreferences sp = getApplicationContext().getSharedPreferences("user", 0);
-            jsonObject.addProperty("sender",search.getText().toString());
-            jsonObject.addProperty("search", sp.getString("enroll",""));
+            jsonObject.addProperty("sender",sp.getString("enroll",""));
+            jsonObject.addProperty("search", search.getText().toString());
 
 
             Gson gson2 = new Gson();
@@ -105,7 +107,7 @@ public class AddContact extends AppCompatActivity {
         }
 
         // Call after onPreExecute method
-        protected SendMessage doInBackground(String... urls) {
+        protected ContactModel doInBackground(String... urls) {
 
 
             HttpURLConnection httpcon;
@@ -140,7 +142,7 @@ public class AddContact extends AppCompatActivity {
                 Gson gson2 = new Gson();
                 Log.i("he;;", sb.toString());
 
-                result = gson2.fromJson(sb.toString(), SendMessage.class);
+                result = gson2.fromJson(sb.toString(), ContactModel.class);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -152,7 +154,7 @@ public class AddContact extends AppCompatActivity {
             return result;
         }
 
-        protected void onPostExecute(SendMessage response) {
+        protected void onPostExecute(ContactModel response) {
             // NOTE: You can call UI Element here.
 
             // Close progress dialog
@@ -161,7 +163,10 @@ public class AddContact extends AppCompatActivity {
             Log.i("response", String.valueOf(response) + Error);
             if (response.getStatus().equalsIgnoreCase("found")) {
                 messageDb =new MessageDb(AddContact.this);
-                messageDb.addContact(search.getText().toString());
+                RandomChat randomChat;
+                Gson gson = new Gson();
+                randomChat = gson.fromJson(response.getProfile(),RandomChat.class);
+                messageDb.addContact(randomChat);
 //                Intent intent = getIntent();
 //                setResult(Activity.RESULT_OK, intent);
                 messageDb.close();

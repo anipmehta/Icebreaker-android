@@ -1,16 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 android:orientation="vertical" android:layout_width="match_parent"
-android:layout_height="wrap_content">
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/enroll"
-    android:text="title"
-    android:textStyle="bold"
-    android:textSize="32sp"
-    android:layout_margin="20dp"
-    android:padding="10dp"
-    android:layout_gravity="center_horizontal" />
+android:layout_height="wrap_content"
+    android:background="@android:color/white">
 
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"></RadioGroup>
+
+    <LinearLayout
+        android:orientation="horizontal" android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp">
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="0dp"
+            android:id="@+id/profile"
+            android:layout_weight="1.5"
+            android:src="@drawable/icebreaker"/>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/enroll"
+                android:text="13103630"
+                android:textSize="22sp"
+                android:textStyle="normal"
+                android:padding="2dp"
+                android:textColor="@android:color/black"
+                android:layout_marginTop="10dp"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/status"
+                android:text="Last Message"
+                android:textSize="18sp"
+                android:textStyle="normal"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp"
+                android:textColor="@android:color/tertiary_text_dark"
+
+                android:layout_gravity="" />
+        </LinearLayout>
+</LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="110dp"
+        android:layout_marginRight="24dp"
+        android:background="#EEEEEE"
+        />
 </LinearLayout>

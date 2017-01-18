@@ -83,6 +83,9 @@ public class ChatAdapter extends BaseAdapter {
 //        boolean myMsg = chatMessage.getIsme() ;//Just a dummy check
         //to simulate whether it me or other sender
         SharedPreferences sp = context.getSharedPreferences("user", 0);
+        if(db.lastRead()==chatMessage.getId())
+            holder.unread.setVisibility(View.VISIBLE);
+        else holder.unread.setVisibility(View.GONE);
         db.updateRead(chatMessage.getId());
         Log.i("hell","kjkjk"+chatMessage.getFrom()+chatMessage.getTo());
         if(chatMessage.getDeliver()==1)
@@ -108,7 +111,7 @@ public class ChatAdapter extends BaseAdapter {
         if(compareDate(chatMessage.getTime()))
             holder.time.setText(convertDate(chatMessage.getTime(),"hh:mm a"));
         else
-            holder.time.setText(convertDate(chatMessage.getTime(),"dd/MM/yy "));
+            holder.time.setText(convertDate(chatMessage.getTime(),"dd/MM/yy ")+"  "+convertDate(chatMessage.getTime(),"hh:mm a"));
             holder.contentWithBG.setVisibility(View.VISIBLE);
             holder.txtMessage.setText(chatMessage.getMessage());
             holder.txtMessage.setMovementMethod(LinkMovementMethod.getInstance());
@@ -181,6 +184,7 @@ public class ChatAdapter extends BaseAdapter {
         holder.contentWithBG = (LinearLayout) v.findViewById(R.id.contentWithBackground);
         holder.txtInfo = (TextView) v.findViewById(R.id.txtInfo);
         holder.time = (TextView) v.findViewById(R.id.time);
+        holder.unread = (TextView) v.findViewById(R.id.unread);
         return holder;
     }
 
@@ -190,6 +194,7 @@ public class ChatAdapter extends BaseAdapter {
         public LinearLayout content;
         public LinearLayout contentWithBG;
         public TextView time;
+        public TextView unread;
     }
     public String convertDate(long dateInMilliseconds,String dateFormat) {
         return DateFormat.format(dateFormat, dateInMilliseconds).toString();

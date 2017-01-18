@@ -1,19 +1,23 @@
 package in.icebreakerapp.icebreaker;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
+import in.icebreakerapp.icebreaker.helpers.MessageDb;
 import in.icebreakerapp.icebreaker.util.CircleTransform;
 
 /**
@@ -22,12 +26,25 @@ import in.icebreakerapp.icebreaker.util.CircleTransform;
 public class Profile extends AppCompatActivity {
     FloatingActionButton button;
     ImageView imageView;
+    private MessageDb db;
+    private TextView enroll,status,gender,batch,college;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
         button = (FloatingActionButton) findViewById(R.id.edit_image);
         imageView = (ImageView) findViewById(R.id.image);
+        enroll = (TextView) findViewById(R.id.enroll);
+        status = (TextView) findViewById(R.id.status);
+        batch = (TextView) findViewById(R.id.batch);
+        gender = (TextView) findViewById(R.id.gender);
+        college = (TextView) findViewById(R.id.college);
+        SharedPreferences sp = getApplicationContext().getSharedPreferences("user",0);
+        enroll.setText(sp.getString("enroll",""));
+        college.setText(sp.getString("college","").replace("\"",""));
+        batch.setText(sp.getString("batch","B9").replace("\"",""));
+        gender.setText(sp.getString("gender","Male").replace("\"","").toUpperCase());
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -35,6 +52,9 @@ public class Profile extends AppCompatActivity {
                 startActivityForResult(intent,1010);
             }
         });
+        ActionBar actionBar = getSupportActionBar();
+//        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(true);
         Picasso.with(this).setLoggingEnabled(true);
         Picasso.with(this).setIndicatorsEnabled(true);
         Picasso.with(this)

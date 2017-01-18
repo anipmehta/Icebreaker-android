@@ -8,6 +8,7 @@ public class RandomChat {
     private String batch;
     private String gender;
     private String college;
+    private String status;
 
     public String getEnroll() {
         return enroll;
@@ -39,5 +40,13 @@ public class RandomChat {
 
     public void setCollege(String college) {
         this.college = college;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

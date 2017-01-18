@@ -65,7 +65,7 @@
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".Home"
-            android:label="IceBreaker ."
+            android:label="IceBreaker."
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".ImageUpload"

@@ -92,7 +92,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Log.i("hell", String.valueOf(db.getChatId(message)));
             if (db.getChatId(message) == 0){
                 db.addChat(message,System.currentTimeMillis());
-                db.addContact(message.getFrom());
+//                db.addContact(message.getFrom());
             }
             db.updateChat(db.getChatId(message),System.currentTimeMillis());
 
