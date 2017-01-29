@@ -4,6 +4,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.widget.Toast;
+
+import in.icebreakerapp.icebreaker.helpers.InternetCheck;
+import in.icebreakerapp.icebreaker.preferences.SliderPref;
 
 /**
  * Created by anip on 14/09/16.
@@ -15,14 +20,15 @@ public class SplashActivity extends AppCompatActivity {
         // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
-
         Thread timerThread = new Thread(){
             public void run(){
                 try{
                     sleep(3000);
+
                 }catch(InterruptedException e){
                     e.printStackTrace();
                 }finally{
+
                     SharedPreferences sharedPreferences =getSharedPreferences("user",0);
                     Intent intent;
                     if(sharedPreferences.getString("enroll","").equalsIgnoreCase("") ){
@@ -32,7 +38,7 @@ public class SplashActivity extends AppCompatActivity {
                         intent = new Intent(SplashActivity.this,Signup.class);
                     }
                     else
-                    intent = new Intent(SplashActivity.this,Home.class);
+                        intent = new Intent(SplashActivity.this,Home.class);
                     startActivity(intent);
                 }
             }

@@ -8,4 +8,18 @@
     <string name="title_activity_home">Home</string>
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_signup">Icebreaker</string>
+
+    <string name="next">NEXT</string>
+    <string name="skip">SKIP</string>
+    <string name="start">GOT IT</string>
+
+    <string name="slide_1_title">slide-1!</string>
+    <string name="slide_1_desc">This is first slide!</string>
+
+    <string name="slide_2_title">slide-2!</string>
+    <string name="slide_2_desc">this is second slide!</string>
+
+    <string name="slide_3_title">slide-3</string>
+    <string name="slide_3_desc">this is third slide</string>
+    <string name="play_again">Play Again</string>
 </resources>

@@ -33,6 +33,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import in.icebreakerapp.icebreaker.models.WebkioskStatus;
+import in.icebreakerapp.icebreaker.preferences.SliderPref;
 
 /**
  * Created by anip on 26/09/16.
@@ -47,10 +48,18 @@ public class Verify extends AppCompatActivity {
     private int code;
     private String reg_id;
     private static final int REQUEST_CODE_READ_PHONE_STATE = 13;
+    private SliderPref sliderPref;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sliderPref=new SliderPref(this);
+        if(sliderPref.isFirstTimeLaunch())
+        {
+            Log.d("slider:","reached");
+            startActivity(new Intent(Verify.this,IntroSlider.class));
+            sliderPref.setFirstTimeLaunch(false);
+        }
         setContentView(R.layout.signup);
         signup = (Button) findViewById(R.id.btn_signup);
         eno_e = (EditText) findViewById(R.id.eno);
