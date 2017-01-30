@@ -31,6 +31,7 @@ public class IntroSlider extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro_slider);
+        getSupportActionBar().hide();
 
 
         // Making notification bar transparent

@@ -74,7 +74,8 @@
             android:name=".Profile"
             android:label="Profile"
             android:theme="@style/AppTheme" />
-        <activity android:name=".IntroSlider"></activity>
+        <activity android:name=".IntroSlider"
+            android:theme="@style/AppTheme"/>
     </application>
 
 </manifest>
