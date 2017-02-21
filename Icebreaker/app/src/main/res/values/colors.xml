@@ -1,6 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#2785ce</color>
-    <color name="colorPrimaryDark">#1874ba</color>
+    <color name="colorPrimaryDark">#222222</color>
     <color name="colorAccent">#f7f7f9</color>
+
+    <!-- bg_colors-->
+    <color name="bg_sc1">#32CD32</color>
+    <color name="bg_sc2">#BB8930</color>
+    <color name="bg_sc3">#4982AD</color>
+
+    <!--dots_act-->
+    <color name="lt_dot_sc1">#90EE90</color>
+    <color name="lt_dot_sc2">#4B0082</color>
+    <color name="lt_dot_sc3">#FFFF33</color>
+
+    <!--dots_deact-->
+    <color name="dk_dot_sc1">#006400</color>
+    <color name="dk_dot_sc2">#9932CC</color>
+    <color name="dk_dot_sc3">#CCCC00</color>
+
+    <array name="dot_act_arr">
+        <item>@color/lt_dot_sc1</item>
+        <item>@color/lt_dot_sc2</item>
+        <item>@color/lt_dot_sc3</item>
+    </array>
+
+    <array name="dot_inact_arr">
+        <item>@color/dk_dot_sc1</item>
+        <item>@color/dk_dot_sc2</item>
+        <item>@color/dk_dot_sc3</item>
+    </array>
+
+
 </resources>

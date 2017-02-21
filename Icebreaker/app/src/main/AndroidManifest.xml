@@ -7,11 +7,10 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.REAL_GET_TASKS" />
-    <uses-permission android:name="android.permission.GET_TASKS"></uses-permission>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_APP_CACHE"/>
-
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_APP_CACHE" />
 
     <application
         android:allowBackup="true"
@@ -41,7 +40,7 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".UpdaterService"></service>
+        <service android:name=".UpdaterService" />
 
         <activity
             android:name=".ChatActivity"
@@ -61,21 +60,22 @@
         <activity
             android:name=".Signup"
             android:label="@string/title_signup"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".Home"
-            android:label="IceBreaker."
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:label="IceBreaker ."
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ImageUpload"
             android:label="Upload"
-            android:theme="@style/AppTheme.NoActionBar"
-            />
-        <activity android:name=".Profile"
-            android:theme="@style/AppTheme"
-            android:label="Profile"/>
-
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Profile"
+            android:label="Profile"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".IntroSlider"
+            android:theme="@style/AppTheme"/>
     </application>
 
 </manifest>
