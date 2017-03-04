@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -30,6 +31,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import in.icebreakerapp.icebreaker.helpers.InternetCheck;
 import in.icebreakerapp.icebreaker.models.SignupStatus;
 import in.icebreakerapp.icebreaker.models.WebkioskStatus;
 import in.icebreakerapp.icebreaker.util.CircleTransform;
@@ -72,8 +74,11 @@ public class Signup extends AppCompatActivity {
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                branch = _branch.getText().toString();
-                batch = _batch.getText().toString();
+
+                if(InternetCheck.internetCheck(getApplicationContext()))
+                {
+                    branch = _branch.getText().toString();
+                    batch = _batch.getText().toString();
 //                password = pass_e.getText().toString();
 //                if (ContextCompat.checkSelfPermission(Signup.this, android.Manifest.permission.READ_PHONE_STATE)
 //                        != PackageManager.PERMISSION_GRANTED) {
@@ -102,8 +107,8 @@ public class Signup extends AppCompatActivity {
 ////                        }
 ////                    }
 //
-                String serverURL1 = "http://anip.xyz/icebreakerlogin.php";
-                new LongOperation2().execute(serverURL1);
+                    String serverURL1 = "http://anip.xyz/icebreakerlogin.php";
+                    new LongOperation2().execute(serverURL1);
 
 
 //                eno = eno_e.getText().toString();
@@ -117,6 +122,11 @@ public class Signup extends AppCompatActivity {
 //                    if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
 //                        break;
 //                    }
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(),"You need a network connection",Toast.LENGTH_SHORT).show();
+                }
             }
 
 

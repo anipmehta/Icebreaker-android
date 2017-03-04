@@ -1,9 +1,16 @@
 package in.icebreakerapp.icebreaker.helpers;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
+import static android.content.Context.SEARCH_SERVICE;
+import static android.content.Context.WINDOW_SERVICE;
 
 /**
  * Created by DravitLochan on 18-01-2017.
@@ -11,24 +18,20 @@ import java.net.URL;
 
 public class InternetCheck {
 
-    public static boolean internetCheck ()
+    public static boolean internetCheck (Context context)
     {
-        try {
-            HttpURLConnection urlConnection = (HttpURLConnection)
-                    (new URL("http://clients3.google.com/generate_204")
-                            .openConnection());
-            urlConnection.setRequestProperty("User-Agent", "Android");
-            urlConnection.setRequestProperty("Connection", "close");
-            urlConnection.setConnectTimeout(1500);
-            urlConnection.connect();
-            if (urlConnection.getResponseCode() == 204 &&
-                    urlConnection.getContentLength() == 0) {
-                Log.d("Network Checker", "Successfully connected to internet");
-                return true;
-            }
-        } catch (IOException e) {
-            Log.e("Network Checker", "Error checking internet connection", e);
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
         }
-        return false;
+        return haveConnectedWifi || haveConnectedMobile;
     }
 }

@@ -32,6 +32,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import in.icebreakerapp.icebreaker.helpers.InternetCheck;
 import in.icebreakerapp.icebreaker.models.WebkioskStatus;
 import in.icebreakerapp.icebreaker.preferences.SliderPref;
 
@@ -211,34 +212,42 @@ public class Verify extends AppCompatActivity {
             Dialog.dismiss();
 
             Log.i("response", String.valueOf(response) + Error);
-            if (response.getResponse().equals("Success") || response.getResponse().equals("User updated")) {
-                SharedPreferences sp = getApplicationContext().getSharedPreferences("user", 0);
-                SharedPreferences.Editor editor = sp.edit();
-                editor.putString("enroll", eno);
-                editor.putString("dob", "");
-                editor.commit();
-                SharedPreferences sp2 = getApplicationContext().getSharedPreferences("deviceConfig", MODE_PRIVATE);
-                int permissionCheck = ContextCompat.checkSelfPermission(Verify.this,
-                        android.Manifest.permission.READ_PHONE_STATE);
-                if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(Verify.this, new String[]{android.Manifest.permission.READ_PHONE_STATE},
-                            REQUEST_CODE_READ_PHONE_STATE);
-                    TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-                    dev_id = telephonyManager.getDeviceId();
-                    // define this constant yourself
-                } else {
-                    TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-                    dev_id = telephonyManager.getDeviceId();
-                    // you have the permission
+
+            if(InternetCheck.internetCheck(getApplicationContext()))
+            {
+                if (response.getResponse().equals("Success") || response.getResponse().equals("User updated")) {
+                    SharedPreferences sp = getApplicationContext().getSharedPreferences("user", 0);
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putString("enroll", eno);
+                    editor.putString("dob", "");
+                    editor.commit();
+                    SharedPreferences sp2 = getApplicationContext().getSharedPreferences("deviceConfig", MODE_PRIVATE);
+                    int permissionCheck = ContextCompat.checkSelfPermission(Verify.this,
+                            android.Manifest.permission.READ_PHONE_STATE);
+                    if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(Verify.this, new String[]{android.Manifest.permission.READ_PHONE_STATE},
+                                REQUEST_CODE_READ_PHONE_STATE);
+                        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+                        dev_id = telephonyManager.getDeviceId();
+                        // define this constant yourself
+                    } else {
+                        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+                        dev_id = telephonyManager.getDeviceId();
+                        // you have the permission
+                    }
+                    reg_id = sp2.getString("token", "");
+                    String serverURL1 = "http://anip.xyz:8080/gcm/v1/device/register/";
+                    new LongOperation1().execute(serverURL1);
                 }
-                reg_id = sp2.getString("token", "");
-                String serverURL1 = "http://anip.xyz:8080/gcm/v1/device/register/";
-                new LongOperation1().execute(serverURL1);
-            } else {
-                Toast.makeText(Verify.this, response.getResponse(), Toast.LENGTH_LONG).show();
+                else
+                {
+                    Toast.makeText(Verify.this, response.getResponse(), Toast.LENGTH_LONG).show();
+                }
             }
-
-
+            else
+            {
+                Toast.makeText(getApplicationContext(),"You need a network connection",Toast.LENGTH_SHORT).show();
+            }
             // Show Response Json On Screen (activity)
             // uiUpdate.setText(Content);
 
