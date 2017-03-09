@@ -2,6 +2,7 @@ package in.icebreakerapp.icebreaker;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -40,12 +41,14 @@ public class AddContact extends AppCompatActivity {
     private EditText search;
     private MessageDb messageDb;
     private Button add;
+    private Context currContext;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_contact);
         search = (EditText)findViewById(R.id.eno);
         add = (Button)findViewById(R.id.add);
+        currContext=getApplicationContext();
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -179,7 +182,13 @@ public class AddContact extends AppCompatActivity {
                 setResult(Activity.RESULT_OK, intent);
                 finish();
             }else {
-                Toast.makeText(AddContact.this, response.getStatus(), Toast.LENGTH_LONG).show();
+                Toast.makeText(AddContact.this, "this student has not yet registered!! Please send them an invite", Toast.LENGTH_LONG).show();
+                String message = getString(R.string.invite);
+                Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_TEXT, message);
+                shareIntent.setType("text/plain");
+                startActivity(shareIntent);
             }
 
 
