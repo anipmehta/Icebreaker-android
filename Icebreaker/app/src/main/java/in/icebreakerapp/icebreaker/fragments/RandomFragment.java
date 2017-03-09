@@ -42,6 +42,7 @@ import java.net.URL;
 import in.icebreakerapp.icebreaker.ChatActivity;
 import in.icebreakerapp.icebreaker.R;
 import in.icebreakerapp.icebreaker.adapters.HomeChatAdapter;
+import in.icebreakerapp.icebreaker.helpers.InternetCheck;
 import in.icebreakerapp.icebreaker.helpers.MessageDb;
 import in.icebreakerapp.icebreaker.models.SendMessage;
 import in.icebreakerapp.icebreaker.util.CircleTransform;
@@ -54,6 +55,7 @@ public class RandomFragment extends Fragment {
     private SwitchCompat switchbtn;
     private RelativeLayout random_found;
     private ImageView found_image;
+    boolean btnState;
 
     public RandomFragment() {
 
@@ -95,11 +97,19 @@ public class RandomFragment extends Fragment {
         switchbtn.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (switchbtn.isChecked())
+                if(InternetCheck.internetCheck(getContext()))
                 {
-                    String serverURL1 = "http://anip.xyz/icebreakerlogin.php";
-                    new LongOperation2().execute(serverURL1);
+                    if (switchbtn.isChecked())
+                    {
+                        String serverURL1 = "http://anip.xyz/icebreakerlogin.php";
+                        new LongOperation2().execute(serverURL1);
+                    }
                 }
+                else
+                {
+                    Toast.makeText(getContext(),"You need a network connection",Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
         if (switchbtn.isChecked())
@@ -225,14 +235,23 @@ public class RandomFragment extends Fragment {
             Dialog.dismiss();
 
             Log.i("response", String.valueOf(response) + Error);
-            if (!response.getStatus().equalsIgnoreCase("wait")) {
+            if(InternetCheck.internetCheck(getContext()))
+            {
+                if (!response.getStatus().equalsIgnoreCase("wait")) {
 //                Intent intent = new Intent(Lo.this, MainActivity.class);
 //                startActivity(intent);
-                Toast.makeText(getActivity(), "We have started a chat with you" + response.getStatus(), Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(getActivity(), "We will notify you once we find a perfect match for you", Toast.LENGTH_LONG).show();
-            }
+                    Toast.makeText(getActivity(), "We have started a chat with you" + response.getStatus(), Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    Toast.makeText(getActivity(), "We will notify you once we find a perfect match for you", Toast.LENGTH_LONG).show();
+                }
 
+            }
+            else
+            {
+                Toast.makeText(getContext(),"You need a network connection",Toast.LENGTH_SHORT).show();
+            }
 
             // Show Response Json On Screen (activity)
             // uiUpdate.setText(Content);

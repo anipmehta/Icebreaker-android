@@ -134,6 +134,7 @@ public class Verify extends AppCompatActivity {
             // }*/
 
             Dialog.setMessage("Pleas wait verifying..");
+            Dialog.setCancelable(false);
             Dialog.show();
             // try{
             // Set Request parameter
