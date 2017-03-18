@@ -32,7 +32,7 @@ public class SplashActivity extends AppCompatActivity {
                     SharedPreferences sharedPreferences =getSharedPreferences("user",0);
                     Intent intent;
                     if(sharedPreferences.getString("enroll","").equalsIgnoreCase("") ){
-                        intent = new Intent(SplashActivity.this,Verify.class);
+                        intent = new Intent(SplashActivity.this,IntroSlider.class);
                     }
                     else if(sharedPreferences.getString("signup","").equalsIgnoreCase("")){
                         intent = new Intent(SplashActivity.this,Signup.class);

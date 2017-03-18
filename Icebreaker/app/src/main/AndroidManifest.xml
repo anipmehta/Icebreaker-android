@@ -48,11 +48,6 @@
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".Verify"
-            android:label="Icebreaker"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateHidden" />
-        <activity
             android:name=".AddContact"
             android:label="Icebreaker"
             android:theme="@style/AppTheme"
@@ -74,8 +69,6 @@
             android:name=".Profile"
             android:label="Profile"
             android:theme="@style/AppTheme" />
-        <activity android:name=".IntroSlider"
-            android:theme="@style/AppTheme"/>
     </application>
 
 </manifest>

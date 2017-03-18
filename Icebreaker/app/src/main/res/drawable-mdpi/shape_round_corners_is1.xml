@@ -5,7 +5,7 @@
     <gradient
         android:angle="225"
         android:startColor="@color/colorPrimaryDark"
-        android:endColor="@color/common_google_signin_btn_text_dark_focused"/>
+        android:endColor="#000000"/>
     <corners
         android:bottomLeftRadius="7dp"
         android:bottomRightRadius="7dp"
