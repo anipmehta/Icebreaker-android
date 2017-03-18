@@ -48,6 +48,11 @@
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="stateHidden" />
         <activity
+            android:name=".IntroSlider"
+            android:label="Icebreaker"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
             android:name=".AddContact"
             android:label="Icebreaker"
             android:theme="@style/AppTheme"
