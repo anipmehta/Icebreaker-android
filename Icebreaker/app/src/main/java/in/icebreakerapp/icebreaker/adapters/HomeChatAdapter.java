@@ -90,8 +90,10 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
         int count=0;
         IcebreakerNotification message = db.lastMessage(chats.get(position).getChat_id());
 
-
-            holder.mTextView.setText(chats.get(position).getEnroll());
+            if(chats.get(position).getNick_name()!=null)
+                holder.mTextView.setText(chats.get(position).getNick_name());
+            else
+                holder.mTextView.setText(chats.get(position).getEnroll());
         if (message != null) {
             holder.message.setText(message.getMessage());
             if (compareDate(message.getTime()))
