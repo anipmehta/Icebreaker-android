@@ -35,7 +35,7 @@ public class MessageDb extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String chat = "CREATE TABLE chat (receiver VARCHAR(8),sender VARCHAR(8),chat_id INTEGER PRIMARY KEY AUTOINCREMENT,lastActive INTEGER)";
         String messages = "CREATE TABLE messages(id INTEGER PRIMARY KEY,chat_id INTEGER,message TEXT NOT NULL,deliver INTEGER DEFAULT 0,send_type INTEGER DEFAULT 0,message_id TEXT NOT NULL,time INTEGER,read INTEGER,FOREIGN KEY(chat_id) REFERENCES chat(chat_id))";
-        String contacts = "CREATE TABLE contacts(id INTEGER PRIMARY KEY AUTOINCREMENT,enroll TEXT NOT NULL,batch TEXT NOT NULL,college TEXT,gender TEXT NOT NULL,status TEXT)";
+        String contacts = "CREATE TABLE contacts(id INTEGER PRIMARY KEY AUTOINCREMENT,enroll TEXT NOT NULL,nick_name TEXT NULL,batch TEXT NOT NULL,college TEXT,gender TEXT NOT NULL,status TEXT)";
         String random = "CREATE TABLE random(id INTEGER PRIMARY KEY AUTOINCREMENT,enroll TEXT NOT NULL,batch TEXT NOT NULL,college TEXT,gender TEXT NOT NULL,time INTEGER)";
         sqLiteDatabase.execSQL(chat);
         sqLiteDatabase.execSQL(messages);
@@ -88,6 +88,7 @@ public class MessageDb extends SQLiteOpenHelper {
         db.insert("random", null, values);
         db.close();
     }
+
     public RandomChat getRandom(){
         RandomChat randomChat = new RandomChat();
         String countQuery = "SELECT * FROM random ORDER BY time DESC";
@@ -228,8 +229,8 @@ public class MessageDb extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
         if(cursor.getCount()>0){
-        cursor.moveToFirst();
-        return Integer.parseInt(cursor.getString(0));}
+            cursor.moveToFirst();
+            return Integer.parseInt(cursor.getString(0));}
         else
             return 0123;
 
@@ -249,6 +250,13 @@ public class MessageDb extends SQLiteOpenHelper {
 
     public void updateMessage(String id) {
         String selectQuery = "UPDATE messages SET deliver=1 WHERE message_id=" + id + "";
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(selectQuery);
+    }
+
+    public void updateContact(int id, String nick)
+    {
+        String selectQuery = "UPDATE contacts SET nick_name=" + nick + "WHERE id=" + id + "";
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL(selectQuery);
     }
@@ -287,7 +295,7 @@ public class MessageDb extends SQLiteOpenHelper {
                 chats.add(cursor.getString(1));
             } while (cursor.moveToNext());
         }
-    return chats.size();
+        return chats.size();
     }
     public int unreadTitle(int chat_id){
         String selectQuery = "SELECT * FROM messages where read=0" + " and chat_id="+chat_id+"";

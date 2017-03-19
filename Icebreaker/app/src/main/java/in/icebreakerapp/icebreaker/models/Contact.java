@@ -9,6 +9,7 @@ import java.io.Serializable;
  */
 public class Contact {
     private String enroll;
+    private String nick_name;
     private String batch;
     private String gender;
     private String college;
@@ -20,6 +21,14 @@ public class Contact {
 
     public void setEnroll(String enroll) {
         this.enroll = enroll;
+    }
+
+    public String getNick_name() {
+        return nick_name;
+    }
+
+    public void setNick_name(String nick_name) {
+        this.nick_name = nick_name;
     }
 
     public String getBatch() {
