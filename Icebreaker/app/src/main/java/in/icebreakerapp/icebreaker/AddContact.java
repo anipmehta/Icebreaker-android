@@ -28,6 +28,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import in.icebreakerapp.icebreaker.fragments.ContactFragment;
+import in.icebreakerapp.icebreaker.helpers.InternetCheck;
 import in.icebreakerapp.icebreaker.helpers.MessageDb;
 import in.icebreakerapp.icebreaker.models.Contact;
 import in.icebreakerapp.icebreaker.models.ContactModel;
@@ -52,8 +53,15 @@ public class AddContact extends AppCompatActivity {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String serverURL1 = "http://anip.xyz/icebreakerlogin.php";
-                new LongOperation2().execute(serverURL1);
+                if(InternetCheck.internetCheck(currContext))
+                {
+                    String serverURL1 = "http://anip.xyz/icebreakerlogin.php";
+                    new LongOperation2().execute(serverURL1);
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(),"You need a network connection",Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
