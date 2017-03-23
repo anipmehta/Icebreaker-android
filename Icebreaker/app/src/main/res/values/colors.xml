@@ -5,9 +5,9 @@
     <color name="colorAccent">#f7f7f9</color>
 
     <!-- bg_colors-->
-    <color name="bg_sc1">#32CD32</color>
-    <color name="bg_sc2">#BB8930</color>
-    <color name="bg_sc3">#4982AD</color>
+    <color name="bg_sc1">#80cbc4</color>
+    <color name="bg_sc2">#00bcd4</color>
+    <color name="bg_sc3">#0288d1</color>
 
     <!--dots_act-->
     <color name="lt_dot_sc1">#90EE90</color>
