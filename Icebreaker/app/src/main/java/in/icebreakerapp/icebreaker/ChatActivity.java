@@ -416,5 +416,17 @@ public class ChatActivity extends ActionBarActivity {
         this.menu = menu;
         return super.onCreateOptionsMenu(menu);
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+                finish();
+             default:
+                 return super.onOptionsItemSelected(item);
+        }
+    }
 }
 
