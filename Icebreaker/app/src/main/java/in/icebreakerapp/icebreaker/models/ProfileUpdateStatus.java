@@ -12,13 +12,13 @@ public class ProfileUpdateStatus implements Serializable {
 
     @SerializedName("status")
 
-    private String status;
+    private boolean status;
 
-    public String getStatus() {
+    public boolean isStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(boolean status) {
         this.status = status;
     }
 }

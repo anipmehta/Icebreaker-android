@@ -48,9 +48,9 @@ public class Profile extends AppCompatActivity {
     ImageView imageView;
     private MessageDb db;
     Context context;
-    private TextView enroll,status,gender,batch,college;
+    private TextView enroll, status, gender, batch, college;
     private ImageView edit_status, edit_dets;
-    private String URL_EDIT_PROFILE="http://anip.xyz:8080/edit/";
+    private String URL_EDIT_PROFILE = "http://anip.xyz:8080/edit/";
     String updated_status, data = "";
 
     @Override
@@ -68,47 +68,30 @@ public class Profile extends AppCompatActivity {
         edit_status = (ImageView) findViewById(R.id.btn_status);
         edit_dets = (ImageView) findViewById(R.id.btn_basic_info);
 
-        SharedPreferences sp = getApplicationContext().getSharedPreferences("user",0);
-        enroll.setText(sp.getString("enroll",""));
-        college.setText(sp.getString("college","").replace("\"",""));
-        batch.setText(sp.getString("batch","B9").replace("\"",""));
-        gender.setText(sp.getString("gender","Male").replace("\"","").toUpperCase());
+        SharedPreferences sp = getApplicationContext().getSharedPreferences("user", 0);
+        enroll.setText(sp.getString("enroll", ""));
+        college.setText(sp.getString("college", "").replace("\"", ""));
+        batch.setText(sp.getString("batch", "B9").replace("\"", ""));
+        gender.setText(sp.getString("gender", "Male").replace("\"", "").toUpperCase());
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(Profile.this,ImageUpload.class);
-                startActivityForResult(intent,1010);
+                Intent intent = new Intent(Profile.this, ImageUpload.class);
+                startActivityForResult(intent, 1010);
             }
         });
 
         edit_status.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                LayoutInflater li = LayoutInflater.from(context);
-                final View promptsView = li.inflate(R.layout.change_status,null);
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-                alertDialogBuilder.setView(promptsView);
-                alertDialogBuilder.setCancelable(false)
-                        .setPositiveButton("OK",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        EditText et_updated_status = (EditText) promptsView.findViewById(R.id.updated_status);
-                                        //status.setText(et_updated_status.getText().toString());
-                                        updated_status = et_updated_status.getText().toString();
-                                        if(InternetCheck.internetCheck(context))
-                                        {
-                                            String serverURL1 = "http://anip.xyz:8080/edit/";
-                                            new LongOperation2().execute(serverURL1);
-                                        }
-                                        else
-                                        {
-                                            Toast.makeText(getApplicationContext(),"You need a network connection",Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                });
-                AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
+                //status.setText(et_updated_status.getText().toString());
+
+                if (InternetCheck.internetCheck(context)) {
+                    String serverURL1 = "http://anip.xyz:8080/edit/";
+                    new LongOperation2().execute(serverURL1);
+                } else {
+                    Toast.makeText(getApplicationContext(), "You need a network connection", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         ActionBar actionBar = getSupportActionBar();
@@ -118,7 +101,7 @@ public class Profile extends AppCompatActivity {
         Picasso.with(this).setIndicatorsEnabled(true);
         Picasso.with(this)
 //                .load(data.getSt)
-                    .load("http://anip.xyz:8080/image/"+getSharedPreferences("user",0).getString("enroll","")+"/")
+                .load("http://anip.xyz:8080/image/" + getSharedPreferences("user", 0).getString("enroll", "") + "/")
 //                .resize(50, 50)
 //                .centerCrop()
                 .fit()
@@ -137,8 +120,8 @@ public class Profile extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.i("hell","http://anip.xyz:8080/image/"+getSharedPreferences("user",0).getString("enroll","")+"/");
-        if(requestCode == 1010 && resultCode==RESULT_OK){
+        Log.i("hell", "http://anip.xyz:8080/image/" + getSharedPreferences("user", 0).getString("enroll", "") + "/");
+        if (requestCode == 1010 && resultCode == RESULT_OK) {
             Picasso.with(this)
                     .load(data.getStringExtra("file"))
 //                    .load("http://anip.xyz:8080/image/"+getSharedPreferences("user",0).getString("enroll","")+"/")
@@ -160,6 +143,7 @@ public class Profile extends AppCompatActivity {
         private String Error = null;
         private ProfileUpdateStatus result;
         private ProgressDialog progressDialog = new ProgressDialog(Profile.this);
+
         @Override
         protected void onPreExecute() {
             //super.onPreExecute();
@@ -171,13 +155,12 @@ public class Profile extends AppCompatActivity {
             college = (TextView) findViewById(R.id.college);
 
             JsonObject jsonObject = new JsonObject();
-            if(updated_status!=null)
-            {
-                jsonObject.addProperty("status",status+"");
-                jsonObject.addProperty("enroll",enroll.getText().toString());
-                jsonObject.addProperty("gender",gender.getText().toString());
-                jsonObject.addProperty("college",college.getText().toString());
-                jsonObject.addProperty("batch",batch.getText().toString());
+                jsonObject.addProperty("status", status + "");
+                jsonObject.addProperty("enroll", enroll.getText().toString());
+                jsonObject.addProperty("gender", gender.getText().toString());
+                jsonObject.addProperty("college", college.getText().toString());
+                jsonObject.addProperty("batch", batch.getText().toString());
+                jsonObject.addProperty("branch", "CSE");
 
                 Gson gson2 = new Gson();
 
@@ -185,11 +168,7 @@ public class Profile extends AppCompatActivity {
                 Log.i("hell", jsonString);
 
                 data = jsonString;
-            }
-            else
-            {
-                Toast.makeText(context,"error occured!",Toast.LENGTH_SHORT).show();
-            }
+
         }
 
         @Override
@@ -234,13 +213,15 @@ public class Profile extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(ProfileUpdateStatus aBoolean) {
-            if(aBoolean.equals("True"))
-            {
+        protected void onPostExecute(ProfileUpdateStatus profileUpdateStatus) {
+
+            if (profileUpdateStatus.isStatus()) {
+                progressDialog.dismiss();
                 status = (TextView) findViewById(R.id.tv_status);
                 status.setText("done!");
+                Toast.makeText(getApplicationContext(),"Update",Toast.LENGTH_LONG).show();
             }
-            progressDialog.dismiss();
+
         }
     }
 }
