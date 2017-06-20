@@ -38,7 +38,7 @@ import java.net.UnknownHostException;
 /**
  * Created by anip on 20/09/16.
  */
-public class ImageUpload extends AppCompatActivity {
+public class  ImageUpload extends AppCompatActivity {
     private static String TAG = null;
     private static String enroll;
     private ImageView imageView;

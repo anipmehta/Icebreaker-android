@@ -115,10 +115,9 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
         Log.i("hell_url","http://anip.xyz:8080/image/"+chats.get(position).getEnroll()+"/");
         Picasso.with(context)
                 .load("http://anip.xyz:8080/image/"+chats.get(position).getEnroll()+"/")
-//                .resize(50, 50)
+                .resize(500, 500)
 //                .centerCrop()
-                .fit()
-                .centerCrop()
+//                .centerCrop()
                 .networkPolicy(NetworkPolicy.NO_CACHE)
                 .transform(new CircleTransform())
                 .placeholder(R.drawable.icebreaker)

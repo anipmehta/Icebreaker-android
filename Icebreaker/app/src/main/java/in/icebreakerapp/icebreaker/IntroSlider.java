@@ -43,6 +43,8 @@ import java.net.URL;
 import in.icebreakerapp.icebreaker.helpers.InternetCheck;
 import in.icebreakerapp.icebreaker.models.WebkioskStatus;
 import in.icebreakerapp.icebreaker.preferences.SliderPref;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 public class IntroSlider extends AppCompatActivity {
 
@@ -68,6 +70,9 @@ public class IntroSlider extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro_slider);
         getSupportActionBar().hide();
+        Realm.init(getApplicationContext());
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
+        Realm.setDefaultConfiguration(realmConfiguration);
 
 
         // Making notification bar transparent

@@ -132,12 +132,14 @@ public class MessageDb extends SQLiteOpenHelper {
         }
     }
 
-    public void addContact(RandomChat randomChat) {
+    public void addContact(Contact randomChat) {
         SQLiteDatabase db = this.getWritableDatabase();
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         ContentValues values = new ContentValues();
+        Log.i("hell", randomChat.getNick_name());
         values.put("enroll", randomChat.getEnroll());
+        values.put("nick_name", randomChat.getNick_name());
         values.put("batch", randomChat.getBatch());
         values.put("college", randomChat.getCollege());
         values.put("gender", randomChat.getGender());
@@ -212,10 +214,11 @@ public class MessageDb extends SQLiteOpenHelper {
             do {
                 Contact contact = new Contact();
                 contact.setEnroll(cursor.getString(1));
-                contact.setBatch(cursor.getString(2));
-                contact.setCollege(cursor.getString(3));
-                contact.setGender(cursor.getString(4));
-                contact.setStatus(cursor.getString(5));
+                contact.setNick_name(cursor.getString(2));
+                contact.setBatch(cursor.getString(3));
+                contact.setCollege(cursor.getString(4));
+                contact.setGender(cursor.getString(5));
+                contact.setStatus(cursor.getString(6));
                 Log.i("hell", cursor.getString(1));
                 messageList.add(contact);
             } while (cursor.moveToNext());

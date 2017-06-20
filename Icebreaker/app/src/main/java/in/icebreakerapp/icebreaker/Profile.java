@@ -14,6 +14,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -222,6 +223,17 @@ public class Profile extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Update",Toast.LENGTH_LONG).show();
             }
 
+        }
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+                finish();
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }
