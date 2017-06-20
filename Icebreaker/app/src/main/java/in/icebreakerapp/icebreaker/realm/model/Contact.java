@@ -1,13 +1,14 @@
-package in.icebreakerapp.icebreaker.models;
+package in.icebreakerapp.icebreaker.realm.model;
 
-import com.google.gson.annotations.SerializedName;
-
-import java.io.Serializable;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 /**
- * Created by anip on 05/09/16.
+ * Created by anip on 18/06/17.
  */
-public class Contact{
+
+public class Contact extends RealmObject{
+    @PrimaryKey
     private String enroll;
     private String nick_name;
     private String batch;

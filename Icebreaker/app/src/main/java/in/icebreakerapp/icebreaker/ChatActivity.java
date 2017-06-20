@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -32,6 +33,8 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -49,6 +52,7 @@ import in.icebreakerapp.icebreaker.adapters.ChatAdapter;
 import in.icebreakerapp.icebreaker.helpers.MessageDb;
 import in.icebreakerapp.icebreaker.models.IcebreakerNotification;
 import in.icebreakerapp.icebreaker.models.SendMessage;
+import in.icebreakerapp.icebreaker.util.CircleTransform;
 
 /**
  * Created by siddharth on 23-08-2016.
@@ -86,16 +90,43 @@ public class ChatActivity extends ActionBarActivity {
         db =new MessageDb(ChatActivity.this);
         ActionBar actionBar = getSupportActionBar();
 //        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setTitle("");
 
         myClipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
-//        actionBar.setDisplayShowCustomEnabled(true);
+        actionBar.setDisplayShowCustomEnabled(true);
 //
-//        LayoutInflater inflator = (LayoutInflater) this .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        View v = inflator.inflate(R.layout.custom_imageview, null);
-//        ((TextView)v.findViewById(R.id.chat_id)).setText(title);
-//        actionBar.setCustomView(v);
+        LayoutInflater inflator = (LayoutInflater) this .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View v = inflator.inflate(R.layout.custom_imageview, null);
+        ((TextView)v.findViewById(R.id.chat_id)).setText(title);
+        actionBar.setCustomView(v);
+        ((ImageView)v.findViewById(R.id.back)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+                finish();
+            }
+        });
+        ((ImageView)v.findViewById(R.id.profile)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+                finish();
+            }
+        });
+
+        Picasso.with(this)
+                .load("http://anip.xyz:8080/image/"+title+"/")
+                .resize(100, 100)
+                .centerCrop()
+                .placeholder(R.drawable.account)
+                .error(R.drawable.account)
+//                .fit()
+//                .centerCrop()
+                .networkPolicy(NetworkPolicy.NO_CACHE)
+                .transform(new CircleTransform())
+                .into((ImageView)v.findViewById(R.id.profile));
 
         initControls();
         receiver = new BroadcastReceiver() {
@@ -415,6 +446,18 @@ public class ChatActivity extends ActionBarActivity {
         inflater.inflate(R.menu.activity_main_actions, menu);
         this.menu = menu;
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+                finish();
+             default:
+                 return super.onOptionsItemSelected(item);
+        }
     }
 }
 

@@ -90,8 +90,10 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
         int count=0;
         IcebreakerNotification message = db.lastMessage(chats.get(position).getChat_id());
 
-
-            holder.mTextView.setText(chats.get(position).getEnroll());
+            if(chats.get(position).getNick_name()!=null)
+                holder.mTextView.setText(chats.get(position).getNick_name());
+            else
+                holder.mTextView.setText(chats.get(position).getEnroll());
         if (message != null) {
             holder.message.setText(message.getMessage());
             if (compareDate(message.getTime()))
@@ -113,10 +115,9 @@ public static class ViewHolder extends RecyclerView.ViewHolder {
         Log.i("hell_url","http://anip.xyz:8080/image/"+chats.get(position).getEnroll()+"/");
         Picasso.with(context)
                 .load("http://anip.xyz:8080/image/"+chats.get(position).getEnroll()+"/")
-//                .resize(50, 50)
+                .resize(500, 500)
 //                .centerCrop()
-                .fit()
-                .centerCrop()
+//                .centerCrop()
                 .networkPolicy(NetworkPolicy.NO_CACHE)
                 .transform(new CircleTransform())
                 .placeholder(R.drawable.icebreaker)

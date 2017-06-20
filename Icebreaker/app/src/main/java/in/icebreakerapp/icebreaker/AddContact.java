@@ -8,15 +8,22 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -28,11 +35,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import in.icebreakerapp.icebreaker.fragments.ContactFragment;
+import in.icebreakerapp.icebreaker.helpers.InternetCheck;
 import in.icebreakerapp.icebreaker.helpers.MessageDb;
 import in.icebreakerapp.icebreaker.models.Contact;
 import in.icebreakerapp.icebreaker.models.ContactModel;
 import in.icebreakerapp.icebreaker.models.RandomChat;
 import in.icebreakerapp.icebreaker.models.SendMessage;
+import in.icebreakerapp.icebreaker.util.CircleTransform;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
  * Created by anip on 04/09/16.
@@ -42,18 +53,49 @@ public class AddContact extends AppCompatActivity {
     private MessageDb messageDb;
     private Button add;
     private Context currContext;
+    private ImageView picture;
+    private ConstraintLayout normalView;
+    private ConstraintLayout foundView;
+    private ConstraintLayout notFoundView;
+    private Button invite;
+    private Button save;
+    private TextView not_found_text;
+    private TextView invite_text;
+    private TextView nick;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Add Contact");
         setContentView(R.layout.add_contact);
         search = (EditText)findViewById(R.id.eno);
         add = (Button)findViewById(R.id.add);
+        picture = (ImageView) findViewById(R.id.profile);
         currContext=getApplicationContext();
+        normalView = (ConstraintLayout) findViewById(R.id.normalView);
+        foundView = (ConstraintLayout) findViewById(R.id.foundView);
+        notFoundView = (ConstraintLayout) findViewById(R.id.notFoundView);
+        invite = (Button) findViewById(R.id.invite);
+        save = (Button) findViewById(R.id.save);
+        normalView.setVisibility(View.VISIBLE);
+        foundView.setVisibility(View.GONE);
+        notFoundView.setVisibility(View.GONE);
+        not_found_text = (TextView) findViewById(R.id.not_found_text);
+        invite_text = (TextView) findViewById(R.id.invite_text);
+        nick = (TextView) findViewById(R.id.nick);
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String serverURL1 = "http://anip.xyz/icebreakerlogin.php";
-                new LongOperation2().execute(serverURL1);
+                if(InternetCheck.internetCheck(currContext))
+                {
+                    String serverURL1 = "http://anip.xyz/icebreakerlogin.php";
+                    new LongOperation2().execute(serverURL1);
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(),"You need a network connection",Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -157,7 +199,7 @@ public class AddContact extends AppCompatActivity {
             return result;
         }
 
-        protected void onPostExecute(ContactModel response) {
+        protected void onPostExecute(final ContactModel response) {
             // NOTE: You can call UI Element here.
 
             // Close progress dialog
@@ -165,44 +207,76 @@ public class AddContact extends AppCompatActivity {
 
             Log.i("response", String.valueOf(response) + Error);
             if (response.getStatus().equalsIgnoreCase("found")) {
-                messageDb =new MessageDb(AddContact.this);
-                RandomChat randomChat;
-                Gson gson = new Gson();
-                randomChat = gson.fromJson(response.getProfile(),RandomChat.class);
-                messageDb.addContact(randomChat);
-//                Intent intent = getIntent();
-//                setResult(Activity.RESULT_OK, intent);
-                messageDb.close();
-                onBackPressed();
-//
-//                onBackPressed();
+                normalView.setVisibility(View.GONE);
+                foundView.setVisibility(View.VISIBLE);
+                Picasso.with(AddContact.this)
+                        .load("http://anip.xyz:8080/image/"+search.getText().toString()+"/")
+                        .resize(500, 500)
+                        .centerCrop()
+                        .transform(new CircleTransform())
+                        .placeholder(R.drawable.icebreaker)
+                        .error(R.drawable.icebreaker)
+                        .into(picture);
+                save.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        messageDb =new MessageDb(AddContact.this);
+                        Contact contact;
+                        Gson gson = new Gson();
+                        contact = gson.fromJson(response.getProfile(),Contact.class);
+                        if(nick.getText().toString()!="" && nick.getText().toString()!= "optional") {
+                            contact.setNick_name(nick.getText().toString());
+                        }
+                        else
+                        {
+                            contact.setNick_name(null);
+                        }
+                        messageDb.addContact(contact);
+                        messageDb.close();
+                        Intent intent = getIntent();
+                        setResult(Activity.RESULT_OK, intent);
+                        finish();
+                    }
+                });
+
             }
             else if (response.getStatus().equalsIgnoreCase("already")){
                 Intent intent = getIntent();
                 setResult(Activity.RESULT_OK, intent);
                 finish();
-            }else {
-                Toast.makeText(AddContact.this, "this student has not yet registered!! Please send them an invite", Toast.LENGTH_LONG).show();
-                String message = getString(R.string.invite);
-                Intent shareIntent = new Intent();
-                shareIntent.setAction(Intent.ACTION_SEND);
-                shareIntent.putExtra(Intent.EXTRA_TEXT, message);
-                shareIntent.setType("text/plain");
-                startActivity(shareIntent);
             }
-
-
-            // Show Response Json On Screen (activity)
-            // uiUpdate.setText(Content);
-
-            /****************** Start Parse Response JSON Data *************/
-
-            // String OutputData = ""
-//                               	SharedPreferences sp = getApplicationContext()
-
+            else {
+                normalView.setVisibility(View.GONE);
+                foundView.setVisibility(View.GONE);
+                notFoundView.setVisibility(View.VISIBLE);
+                not_found_text.setText(search.getText().toString()+" "+ "this student has not yet registered!!");
+                invite_text.setText("You can invite "+search.getText().toString()+" by clicking the button below.");
+                invite.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String message = getString(R.string.invite);
+                        Intent shareIntent = new Intent();
+                        shareIntent.setAction(Intent.ACTION_SEND);
+                        shareIntent.putExtra(Intent.EXTRA_TEXT, message);
+                        shareIntent.setType("text/plain");
+                        startActivity(shareIntent);
+                    }
+                });
+            }
 
         }
 
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                onBackPressed();
+                finish();
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }

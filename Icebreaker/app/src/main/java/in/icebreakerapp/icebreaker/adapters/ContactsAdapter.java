@@ -74,14 +74,19 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.enroll.setText(contacts.get(position).getEnroll());
+        if(contacts.get(position).getNick_name()!=null) {
+            Log.i("hell_name",contacts.get(position).getNick_name());
+            holder.enroll.setText(contacts.get(position).getNick_name());
+        }
+        else
+            holder.enroll.setText(contacts.get(position).getEnroll());
         holder.status.setText(contacts.get(position).getStatus());
         Log.i("hell_url","http://anip.xyz:8080/image/"+contacts.get(position).getEnroll()+"/");
         Picasso.with(context)
                 .load("http://anip.xyz:8080/image/"+contacts.get(position).getEnroll()+"/")
-//                .resize(50, 50)
+                .resize(200, 200)
 //                .centerCrop()
-                .fit()
+//                .fit()
                 .centerCrop()
                 .networkPolicy(NetworkPolicy.NO_CACHE)
                 .transform(new CircleTransform())

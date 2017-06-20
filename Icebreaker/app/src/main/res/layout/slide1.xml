@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark">
+    android:background="@color/bg_sc1">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -16,15 +16,16 @@
             android:layout_width="@dimen/img_width_height"
             android:layout_height="@dimen/img_width_height"
             android:src="@drawable/is_1"
-            android:background="@drawable/shape_round_corners_is1" />
+            />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/slide_1_title"
-            android:textColor="@android:color/white"
+            android:textColor="#111a19"
             android:textSize="@dimen/slide_title"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            />
 
         <TextView
             android:layout_width="wrap_content"
@@ -34,7 +35,7 @@
             android:paddingRight="@dimen/desc_padding"
             android:text="@string/slide_1_desc"
             android:textAlignment="center"
-            android:textColor="@android:color/white"
+            android:textColor="#213331"
             android:textSize="@dimen/slide_desc" />
 
     </LinearLayout>
